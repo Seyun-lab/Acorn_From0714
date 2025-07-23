@@ -1,0 +1,180 @@
+{# base.html 템플릿을 상속받아서 공통 레이아웃 사용 #}
+{% extends 'base.html' %}
+
+{# 페이지 제목을 "글 작성 - Django Blog"로 설정 #}
+{# 브라우저 탭에 표시되는 제목 #}
+{% block title %}글 작성 - Django Blog{% endblock %}
+
+{# 메인 컨텐츠 영역 시작 #}
+{% block content %}
+
+<!-- Bootstrap 그리드 시스템: 폼을 화면 중앙에 배치 -->
+<!-- row: Bootstrap 행 생성 -->
+<!-- justify-content-center: 자식 요소들을 수평 중앙 정렬 -->
+<div class="row justify-content-center">
+    
+    <!-- 중간 크기 화면에서 8칸 차지 (전체 12칸 중 2/3) -->
+    <!-- 글 작성 폼은 약간 넓게 설정하여 텍스트 입력 편의성 향상 -->
+    <div class="col-md-8">
+        
+        <!-- Bootstrap 카드 컴포넌트: 폼을 깔끔한 박스로 감싸기 -->
+        <div class="card">
+            
+            <!-- 카드 헤더: 제목 영역 -->
+            <div class="card-header">
+                <!-- ✏️: 글쓰기를 나타내는 이모지로 시각적 표현 -->
+                <h3>✏️ 새 글 작성</h3>
+            </div>
+            
+            <!-- 카드 본문: 실제 폼 내용이 들어가는 영역 -->
+            <div class="card-body">
+                
+                <!-- 게시글 작성 폼 시작 -->
+                <!-- method="post": HTTP POST 방식으로 데이터 전송 -->
+                <!-- action 속성 생략: 현재 URL(/post/create/)로 폼 데이터 전송 -->
+                <form method="post">
+                    
+                    <!-- CSRF 토큰: Django 보안 기능 -->
+                    <!-- Cross-Site Request Forgery 공격 방지 -->
+                    {% csrf_token %}
+                    
+                    <!-- 제목 입력 필드 -->
+                    <!-- mb-3: margin-bottom 3단계 (필드 간 간격) -->
+                    <div class="mb-3">
+                        
+                        <!-- 제목 필드 라벨 -->
+                        <!-- for 속성: 클릭시 해당 input으로 포커스 이동 -->
+                        <!-- form.title.id_for_label: Django 폼 필드의 고유 ID 가져오기 -->
+                        <label for="{{ form.title.id_for_label }}" class="form-label">제목</label>
+                        
+                        <!-- Django PostForm의 title 필드 렌더링 -->
+                        <!-- forms.py에서 정의한 위젯과 속성이 적용됨 -->
+                        <!-- 실제 생성: <input type="text" name="title" class="form-control" placeholder="제목을 입력하세요" ...> -->
+                        {{ form.title }}
+                        
+                        <!-- 제목 필드 에러 메시지 표시 -->
+                        <!-- form.title.errors: 제목 필드 유효성 검사 실패시 에러 리스트 -->
+                        {% if form.title.errors %}
+                            
+                            <!-- text-danger: Bootstrap 위험(빨간색) 텍스트 스타일 -->
+                            <div class="text-danger">
+                                
+                                <!-- 해당 필드의 모든 에러 메시지를 순회하며 표시 -->
+                                {% for error in form.title.errors %}
+                                    <!-- small: 작은 크기 텍스트 -->
+                                    <!-- 예: "이 필드는 필수입니다.", "제목이 너무 깁니다." -->
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                                
+                            </div>
+                            
+                        {% endif %}
+                        
+                    </div>
+                    
+                    <!-- 내용 입력 필드 -->
+                    <div class="mb-3">
+                        
+                        <!-- 내용 필드 라벨 -->
+                        <label for="{{ form.content.id_for_label }}" class="form-label">내용</label>
+                        
+                        <!-- Django PostForm의 content 필드 렌더링 -->
+                        <!-- forms.py에서 Textarea 위젯으로 설정됨 -->
+                        <!-- 실제 생성: <textarea name="content" class="form-control" rows="10" placeholder="내용을 입력하세요" ...></textarea> -->
+                        {{ form.content }}
+                        
+                        <!-- 내용 필드 에러 메시지 표시 -->
+                        {% if form.content.errors %}
+                            <div class="text-danger">
+                                {% for error in form.content.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        
+                    </div>
+                    
+                    <!-- 버튼 그룹 -->
+                    <!-- d-flex: Flexbox 레이아웃 -->
+                    <!-- gap-2: 자식 요소 간 2단계 간격 -->
+                    <div class="d-flex gap-2">
+                        
+                        <!-- 작성 완료 버튼 -->
+                        <!-- type="submit": 폼 제출 기능 -->
+                        <!-- btn btn-primary: Bootstrap 기본(파란색) 버튼 스타일 -->
+                        <!-- 📝: 문서 작성을 나타내는 이모지 -->
+                        <button type="submit" class="btn btn-primary">📝 작성 완료</button>
+                        
+                        <!-- 취소 버튼 -->
+                        <!-- a 태그: 링크로 구현 (페이지 이동) -->
+                        <!-- btn btn-secondary: Bootstrap 보조(회색) 버튼 스타일 -->
+                        <!-- {% url 'posts' %}: 게시글 목록 페이지로 이동 -->
+                        <!-- ❌: 취소를 나타내는 이모지 -->
+                        <a href="{% url 'posts' %}" class="btn btn-secondary">❌ 취소</a>
+                        
+                    </div>
+                    
+                </form>
+            </div> <!-- card-body 끝 -->
+        </div> <!-- card 끝 -->
+        
+        <!-- 추가 도움말 영역 -->
+        <!-- mt-3: margin-top 3단계 (위쪽 여백) -->
+        <!-- text-center: 텍스트 중앙 정렬 -->
+        <div class="mt-3 text-center">
+            
+            <!-- 사용법 안내 -->
+            <!-- text-muted: Bootstrap에서 흐린 회색 텍스트 -->
+            <!-- small: 작은 크기 텍스트 -->
+            <!-- 💡: 전구 이모지로 팁임을 표현 -->
+            <small class="text-muted">
+                💡 팁: 마크다운 문법을 사용하여 글을 꾸며보세요!
+            </small>
+            
+        </div>
+        
+    </div> <!-- col-md-8 끝 -->
+</div> <!-- row 끝 -->
+
+{% endblock %} {# content 블록 끝 #}
+
+{# 
+이 게시글 작성 페이지의 특징과 기능:
+
+1. 사용자 친화적 UI:
+   - 깔끔한 카드 레이아웃
+   - 명확한 라벨과 플레이스홀더
+   - 시각적 이모지 활용
+   - 실시간 에러 메시지 표시
+
+2. 폼 유효성 검사:
+   - Django ModelForm 기반 자동 검증
+   - 제목 길이 제한 (models.py에서 max_length=200)
+   - 필수 필드 검증
+   - 사용자 입력 데이터 유지 (에러시)
+
+3. 보안 기능:
+   - CSRF 토큰으로 Cross-Site Request Forgery 방지
+   - Django의 자동 HTML 이스케이핑
+   - POST 방식으로 안전한 데이터 전송
+
+4. 사용자 경험:
+   - 작성/취소 버튼으로 명확한 행동 선택지 제공
+   - 게시글 목록으로 쉬운 이동
+   - 마크다운 사용법 힌트 제공
+
+5. 작동 과정:
+   GET 요청 (첫 방문):
+   - views.py의 post_create_view에서 PostForm() 빈 폼 생성
+   - 이 템플릿 렌더링하여 빈 폼 표시
+   
+   POST 요청 (폼 제출):
+   - 사용자가 제목, 내용 입력 후 "작성 완료" 클릭
+   - CSRF 토큰과 함께 title, content 데이터 전송
+   - views.py에서 PostForm(request.POST)로 유효성 검사
+   - 성공시: 새 게시글 저장 후 상세 페이지로 리다이렉트
+   - 실패시: 에러 메시지와 함께 폼 다시 표시
+
+이 템플릿은 Django의 ModelForm과 완벽하게 통합되어
+사용자가 쉽고 안전하게 새 게시글을 작성할 수 있도록 돕습니다.
+#}

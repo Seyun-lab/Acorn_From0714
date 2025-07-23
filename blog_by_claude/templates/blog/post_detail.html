@@ -1,0 +1,276 @@
+{# base.html 템플릿을 상속받아서 공통 레이아웃 사용 #}
+{% extends 'base.html' %}
+
+{# 페이지 제목을 동적으로 설정 #}
+{# {{ post.title }}: 게시글의 실제 제목을 템플릿 변수로 출력 #}
+{# 예: "Django 시작하기 - Django Blog" #}
+{% block title %}{{ post.title }} - Django Blog{% endblock %}
+
+{# 메인 컨텐츠 영역 시작 #}
+{% block content %}
+
+<!-- Bootstrap 그리드 시스템: 게시글을 화면 중앙에 배치 -->
+<!-- row: Bootstrap 행 생성 -->
+<!-- justify-content-center: 자식 요소들을 수평 중앙 정렬 -->
+<div class="row justify-content-center">
+    
+    <!-- 중간 크기 화면에서 10칸 차지 (전체 12칸 중 5/6) -->
+    <!-- 게시글 상세보기는 넓게 표시하여 가독성 향상 -->
+    <div class="col-md-10">
+        
+        <!-- HTML5 시맨틱 태그: article (독립적인 콘텐츠 블록) -->
+        <!-- card: Bootstrap 카드 컴포넌트로 깔끔한 박스 형태 -->
+        <article class="card">
+            
+            <!-- 카드 헤더: 게시글 제목과 메타 정보 -->
+            <div class="card-header">
+                
+                <!-- 게시글 제목 -->
+                <!-- h1: 가장 중요한 제목 (SEO와 접근성에 좋음) -->
+                <!-- card-title: Bootstrap 카드 제목 스타일 -->
+                <!-- mb-0: margin-bottom 0 (아래쪽 여백 제거) -->
+                <h1 class="card-title mb-0">{{ post.title }}</h1>
+                
+                <!-- 메타 정보 영역 -->
+                <!-- text-muted: Bootstrap 흐린 회색 텍스트 -->
+                <!-- mt-2: margin-top 2단계 (위쪽 여백) -->
+                <div class="text-muted mt-2">
+                    <small>
+                        
+                        <!-- 작성자 정보 -->
+                        <!-- 👤: 사용자를 나타내는 이모지 -->
+                        <!-- {{ post.author.username }}: User 모델의 username 필드 -->
+                        <!-- strong: 굵은 글씨로 강조 -->
+                        👤 작성자: <strong>{{ post.author.username }}</strong> | 
+                        
+                        <!-- 작성일 정보 -->
+                        <!-- 📅: 달력을 나타내는 이모지 -->
+                        <!-- {{ post.created_at|date:"Y년 m월 d일 H:i" }}: Django 템플릿 필터 -->
+                        <!-- |date: 날짜 형식 지정 필터 -->
+                        <!-- "Y년 m월 d일 H:i": 2024년 1월 15일 14:30 형태로 표시 -->
+                        📅 작성일: {{ post.created_at|date:"Y년 m월 d일 H:i" }}
+                        
+                        <!-- 수정일 표시 (수정된 경우에만) -->
+                        <!-- {% if post.updated_at != post.created_at %}: 수정일과 작성일이 다른 경우 -->
+                        <!-- 즉, 게시글이 수정된 경우에만 수정일 표시 -->
+                        {% if post.updated_at != post.created_at %}
+                            <!-- ✏️: 연필을 나타내는 이모지 (수정 의미) -->
+                            | ✏️ 수정일: {{ post.updated_at|date:"Y년 m월 d일 H:i" }}
+                        {% endif %}
+                        
+                    </small>
+                </div>
+            </div>
+            
+            <!-- 카드 본문: 게시글 내용 -->
+            <div class="card-body">
+                
+                <!-- 게시글 내용 컨테이너 -->
+                <!-- post-content: 커스텀 CSS 클래스 (하단에 스타일 정의) -->
+                <div class="post-content">
+                    
+                    <!-- 게시글 내용 출력 -->
+                    <!-- {{ post.content }}: Post 모델의 content 필드 -->
+                    <!-- |linebreaks: Django 템플릿 필터 -->
+                    <!-- 텍스트의 줄바꿈을 HTML <p>와 <br> 태그로 자동 변환 -->
+                    <!-- 예: "안녕하세요\n\n반갑습니다" → "<p>안녕하세요</p><p>반갑습니다</p>" -->
+                    {{ post.content|linebreaks }}
+                    
+                </div>
+            </div>
+            
+            <!-- 카드 푸터: 버튼들 -->
+            <div class="card-footer">
+                
+                <!-- Flexbox 레이아웃: 버튼들을 좌우 양끝으로 배치 -->
+                <!-- d-flex: Flexbox 활성화 -->
+                <!-- justify-content-between: 좌우 양끝 정렬 -->
+                <!-- align-items-center: 수직 중앙 정렬 -->
+                <div class="d-flex justify-content-between align-items-center">
+                    
+                    <!-- 왼쪽 버튼 그룹: 네비게이션 -->
+                    <div>
+                        
+                        <!-- 목록으로 돌아가기 버튼 -->
+                        <!-- btn btn-outline-secondary: Bootstrap 아웃라인(테두리만) 보조 버튼 -->
+                        <!-- {% url 'posts' %}: posts URL 패턴으로 이동 -->
+                        <!-- 📋: 목록을 나타내는 이모지 -->
+                        <a href="{% url 'posts' %}" class="btn btn-outline-secondary">
+                            📋 목록으로
+                        </a>
+                        
+                        <!-- 메인으로 돌아가기 버튼 -->
+                        <!-- btn-outline-primary: 아웃라인 기본(파란색) 버튼 -->
+                        <!-- 🏠: 집을 나타내는 이모지 -->
+                        <a href="{% url 'index' %}" class="btn btn-outline-primary">
+                            🏠 메인으로
+                        </a>
+                        
+                    </div>
+                    
+                    <!-- 오른쪽 버튼 그룹: 작성자 전용 액션 -->
+                    <!-- {% if user == post.author %}: 현재 로그인한 사용자가 게시글 작성자인 경우에만 표시 -->
+                    <!-- 권한 기반 UI 제어 -->
+                    {% if user == post.author %}
+                        <div>
+                            
+                            <!-- 수정하기 버튼 -->
+                            <!-- btn-warning: Bootstrap 경고(노란색) 버튼 -->
+                            <!-- {% url 'post_edit' post.pk %}: 게시글 수정 URL, pk는 Primary Key -->
+                            <!-- ✏️: 편집을 나타내는 이모지 -->
+                            <a href="{% url 'post_edit' post.pk %}" class="btn btn-warning">
+                                ✏️ 수정하기
+                            </a>
+                            
+                            <!-- 삭제하기 버튼 -->
+                            <!-- button: form이 아닌 JavaScript 액션용 버튼 -->
+                            <!-- btn-danger: Bootstrap 위험(빨간색) 버튼 -->
+                            <!-- data-bs-toggle="modal": Bootstrap 모달 트리거 -->
+                            <!-- data-bs-target="#deleteModal": 타겟 모달 ID 지정 -->
+                            <!-- 🗑️: 휴지통을 나타내는 이모지 -->
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                🗑️ 삭제하기
+                            </button>
+                            
+                        </div>
+                    {% endif %}
+                    
+                </div>
+            </div>
+        </article>
+    </div>
+</div>
+
+<!-- 삭제 확인 모달 (작성자에게만 표시) -->
+{% if user == post.author %}
+
+    <!-- Bootstrap 모달 컴포넌트 -->
+    <!-- modal fade: 모달 기본 클래스와 페이드 애니메이션 -->
+    <!-- id="deleteModal": JavaScript와 data-bs-target에서 참조할 고유 ID -->
+    <!-- tabindex="-1": 키보드 탭 순서에서 제외 -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        
+        <!-- 모달 다이얼로그 컨테이너 -->
+        <div class="modal-dialog">
+            
+            <!-- 모달 콘텐츠 -->
+            <div class="modal-content">
+                
+                <!-- 모달 헤더 -->
+                <div class="modal-header">
+                    
+                    <!-- 모달 제목 -->
+                    <h5 class="modal-title">게시글 삭제</h5>
+                    
+                    <!-- 모달 닫기 버튼 (X) -->
+                    <!-- btn-close: Bootstrap 5의 닫기 버튼 스타일 -->
+                    <!-- data-bs-dismiss="modal": 모달 닫기 액션 -->
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    
+                </div>
+                
+                <!-- 모달 본문 -->
+                <div class="modal-body">
+                    
+                    <!-- 확인 메시지 -->
+                    <p>정말로 이 게시글을 삭제하시겠습니까?</p>
+                    
+                    <!-- 삭제할 게시글 제목 강조 표시 -->
+                    <strong>"{{ post.title }}"</strong>
+                    
+                    <!-- 경고 메시지 -->
+                    <!-- text-danger: Bootstrap 위험(빨간색) 텍스트 -->
+                    <!-- mt-2: margin-top 2단계 -->
+                    <!-- ⚠️: 경고를 나타내는 이모지 -->
+                    <p class="text-danger mt-2">⚠️ 삭제된 게시글은 복구할 수 없습니다.</p>
+                    
+                </div>
+                
+                <!-- 모달 푸터: 액션 버튼들 -->
+                <div class="modal-footer">
+                    
+                    <!-- 취소 버튼 -->
+                    <!-- btn-secondary: Bootstrap 보조(회색) 버튼 -->
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                    
+                    <!-- 삭제 확인 폼 -->
+                    <!-- method="post": HTTP POST 방식 -->
+                    <!-- style="display: inline;": 버튼과 같은 줄에 배치 -->
+                    <form method="post" style="display: inline;">
+                        
+                        <!-- CSRF 토큰: 보안을 위한 필수 요소 -->
+                        {% csrf_token %}
+                        
+                        <!-- 삭제 액션 식별용 히든 필드 -->
+                        <!-- views.py에서 request.POST.get('delete') == 'true'로 삭제 요청 확인 -->
+                        <input type="hidden" name="delete" value="true">
+                        
+                        <!-- 최종 삭제 버튼 -->
+                        <!-- type="submit": 폼 제출 -->
+                        <button type="submit" class="btn btn-danger">삭제하기</button>
+                        
+                    </form>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    
+{% endif %}
+
+<!-- 커스텀 CSS 스타일 -->
+<style>
+    /* 게시글 내용 영역 스타일 */
+    .post-content {
+        font-size: 1.1rem;         /* 기본 폰트보다 약간 크게 (가독성 향상) */
+        line-height: 1.8;          /* 줄 간격을 넉넉하게 (가독성 향상) */
+        color: #333;               /* 어두운 회색 텍스트 (눈의 피로감 감소) */
+    }
+    
+    /* 게시글 제목 스타일 */
+    .card-title {
+        color: #2c3e50;            /* 진한 청회색으로 제목 강조 */
+    }
+</style>
+
+{% endblock %} {# content 블록 끝 #}
+
+{# 
+이 게시글 상세보기 페이지의 특징과 기능:
+
+1. 완전한 게시글 정보 표시:
+   - 제목, 작성자, 작성일, 수정일 (해당시)
+   - 전체 게시글 내용
+   - 시각적 이모지로 정보 구분
+
+2. 동적 권한 제어:
+   - 게시글 작성자에게만 수정/삭제 버튼 표시
+   - user == post.author 조건으로 권한 확인
+   - 다른 사용자에게는 네비게이션 버튼만 표시
+
+3. 안전한 삭제 기능:
+   - Bootstrap 모달로 삭제 확인
+   - 게시글 제목과 경고 메시지로 실수 방지
+   - CSRF 토큰으로 보안 강화
+   - POST 방식으로 안전한 삭제
+
+4. 향상된 사용자 경험:
+   - linebreaks 필터로 자연스러운 텍스트 표시
+   - 직관적인 네비게이션 버튼
+   - 반응형 디자인으로 모든 기기 지원
+   - 커스텀 CSS로 가독성 최적화
+
+5. 작동 과정:
+   GET 요청:
+   - views.py의 post_detail_view에서 Post 객체 가져오기
+   - 템플릿에 post 변수로 전달
+   - 권한에 따른 조건부 UI 표시
+   
+   POST 요청 (삭제):
+   - 모달에서 "삭제하기" 버튼 클릭시
+   - delete=true 히든 필드와 함께 POST 전송
+   - views.py에서 삭제 처리 후 목록으로 리다이렉트
+
+이 템플릿은 게시글의 모든 정보를 사용자 친화적으로 표시하면서,
+작성자에게는 관리 기능을, 다른 사용자에게는 읽기 전용 경험을 제공합니다.
+#}

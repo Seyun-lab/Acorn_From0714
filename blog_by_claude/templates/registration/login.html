@@ -1,0 +1,179 @@
+{# base.html 템플릿을 상속받아서 기본 레이아웃 사용 #}
+{% extends 'base.html' %}
+
+{# 페이지 제목을 "로그인 - Django Blog"로 설정 #}
+{# 브라우저 탭에 표시되는 제목 #}
+{% block title %}로그인 - Django Blog{% endblock %}
+
+{# 메인 컨텐츠 영역 시작 #}
+{% block content %}
+
+<!-- Bootstrap 그리드 시스템: 폼을 화면 중앙에 배치 -->
+<!-- row: Bootstrap 행 생성 -->
+<!-- justify-content-center: 자식 요소들을 수평 중앙 정렬 -->
+<div class="row justify-content-center">
+    
+    <!-- Bootstrap 컬럼: 중간 크기 화면에서 6칸 차지 (전체 12칸 중) -->
+    <!-- 반응형: 모바일(전체), 태블릿 이상(50%) -->
+    <div class="col-md-6">
+        
+        <!-- Bootstrap 카드 컴포넌트: 깔끔한 박스 형태의 UI -->
+        <div class="card">
+            
+            <!-- 카드 헤더: 제목 영역 -->
+            <div class="card-header">
+                <!-- h3: 제목 태그, text-center: 중앙 정렬 -->
+                <h3 class="text-center">로그인</h3>
+            </div>
+            
+            <!-- 카드 본문: 실제 폼 내용이 들어가는 영역 -->
+            <div class="card-body">
+                
+                <!-- 로그인 폼 시작 -->
+                <!-- method="post": HTTP POST 방식으로 데이터 전송 (보안상 안전) -->
+                <!-- action 속성 생략: 현재 URL(/login/)로 폼 데이터 전송 -->
+                <form method="post">
+                    
+                    <!-- CSRF 토큰: 보안을 위한 필수 요소 -->
+                    <!-- Cross-Site Request Forgery 공격 방지 -->
+                    <!-- Django에서 POST 요청시 반드시 포함해야 함 -->
+                    {% csrf_token %}
+                    
+                    <!-- 사용자명 입력 필드 -->
+                    <!-- mb-3: margin-bottom 3단계 (필드 간 간격 조정) -->
+                    <div class="mb-3">
+                        
+                        <!-- 라벨: 입력 필드에 대한 설명 -->
+                        <!-- for 속성: 클릭시 해당 input으로 포커스 이동 -->
+                        <!-- form.username.id_for_label: Django 폼 필드의 고유 ID 가져오기 -->
+                        <label for="{{ form.username.id_for_label }}" class="form-label">사용자명</label>
+                        
+                        <!-- Django AuthenticationForm의 username 필드 렌더링 -->
+                        <!-- 자동으로 <input type="text" name="username" id="id_username" ...> 생성 -->
+                        {{ form.username }}
+                        
+                    </div>
+                    
+                    <!-- 비밀번호 입력 필드 -->
+                    <div class="mb-3">
+                        
+                        <!-- 비밀번호 라벨 -->
+                        <label for="{{ form.password.id_for_label }}" class="form-label">비밀번호</label>
+                        
+                        <!-- Django AuthenticationForm의 password 필드 렌더링 -->
+                        <!-- 자동으로 <input type="password" name="password" id="id_password" ...> 생성 -->
+                        <!-- type="password"로 입력 내용이 *로 표시됨 -->
+                        {{ form.password }}
+                        
+                    </div>
+                    
+                    <!-- 폼 검증 에러 메시지 표시 영역 -->
+                    <!-- form.errors: views.py에서 form.is_valid() 실패시 생성되는 에러 -->
+                    {% if form.errors %}
+                        
+                        <!-- Bootstrap Alert: 위험/에러 스타일 (빨간색 배경) -->
+                        <div class="alert alert-danger">
+                            
+                            <!-- 모든 폼 에러를 표시 -->
+                            <!-- 예: "사용자명이나 비밀번호가 올바르지 않습니다." -->
+                            {{ form.errors }}
+                            
+                        </div>
+                        
+                    {% endif %}
+                    
+                    <!-- 로그인 버튼 영역 -->
+                    <!-- d-grid: Bootstrap에서 버튼을 전체 너비로 확장 -->
+                    <div class="d-grid">
+                        
+                        <!-- 제출 버튼: 폼 데이터를 서버로 전송 -->
+                        <!-- type="submit": 폼 제출 기능 -->
+                        <!-- btn btn-primary: Bootstrap 기본(파란색) 버튼 스타일 -->
+                        <button type="submit" class="btn btn-primary">로그인</button>
+                        
+                    </div>
+                    
+                </form>
+                
+                <!-- 추가 링크들 (폼 밖에 위치) -->
+                <!-- text-center: 텍스트 중앙 정렬 -->
+                <!-- mt-3: margin-top 3단계 (위쪽 여백) -->
+                <div class="text-center mt-3">
+                    
+                    <!-- 회원가입 안내 및 링크 -->
+                    <!-- {% url 'signup' %}: urls.py에서 정의한 'signup' 패턴의 실제 URL로 변환 -->
+                    <p>계정이 없으신가요? <a href="{% url 'signup' %}">회원가입</a></p>
+                    
+                    <!-- 메인 페이지 복귀 링크 -->
+                    <p><a href="{% url 'index' %}">메인 페이지로 돌아가기</a></p>
+                    
+                </div>
+                
+            </div> <!-- card-body 끝 -->
+        </div> <!-- card 끝 -->
+    </div> <!-- col-md-6 끝 -->
+</div> <!-- row 끝 -->
+
+<!-- 커스텀 CSS 스타일 -->
+<style>
+    /* Django가 자동 생성하는 input 필드들의 스타일 통일 */
+    /* #id_username, #id_password: Django AuthenticationForm 필드의 자동 생성 ID */
+    #id_username, #id_password {
+        width: 100%;                    /* 전체 너비 사용 */
+        padding: 0.375rem 0.75rem;      /* 내부 여백 (Bootstrap form-control과 동일) */
+        margin-bottom: 0.5rem;          /* 아래쪽 여백 */
+        border: 1px solid #ced4da;      /* 테두리 (연한 회색) */
+        border-radius: 0.25rem;         /* 모서리 둥글게 */
+        font-size: 1rem;                /* 폰트 크기 */
+        line-height: 1.5;               /* 줄 높이 */
+        color: #495057;                 /* 텍스트 색상 (어두운 회색) */
+        background-color: #fff;         /* 배경색 (흰색) */
+        background-clip: padding-box;    /* 배경 클립 설정 */
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; /* 포커스 전환 애니메이션 */
+    }
+    
+    /* input 필드 포커스시 스타일 */
+    #id_username:focus, #id_password:focus {
+        color: #495057;
+        background-color: #fff;
+        border-color: #80bdff;          /* 포커스시 파란색 테두리 */
+        outline: 0;                     /* 기본 outline 제거 */
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* 파란색 그림자 효과 */
+    }
+</style>
+
+{% endblock %} {# content 블록 끝 #}
+
+{# 
+이 로그인 템플릿의 작동 과정:
+
+1. GET 요청 (첫 방문):
+   - Django의 LoginView가 AuthenticationForm() 빈 폼 생성
+   - 이 템플릿 렌더링하여 로그인 폼 표시
+   - 사용자가 사용자명과 비밀번호 입력란 확인
+
+2. POST 요청 (로그인 시도):
+   - 사용자가 사용자명, 비밀번호 입력 후 "로그인" 버튼 클릭
+   - CSRF 토큰과 함께 username, password 데이터 전송
+   - LoginView가 AuthenticationForm(request.POST)으로 데이터 검증
+
+3. 로그인 성공:
+   - Django가 자동으로 사용자 세션 생성
+   - settings.py의 LOGIN_REDIRECT_URL('/')로 리다이렉트
+   - 이후 모든 request.user에서 로그인된 사용자 정보 접근 가능
+
+4. 로그인 실패:
+   - form.errors에 "사용자명이나 비밀번호가 올바르지 않습니다" 메시지 추가
+   - 같은 템플릿 다시 렌더링 (에러 메시지 포함)
+   - 사용자명은 유지되지만 비밀번호는 보안상 초기화
+
+Django 인증 시스템의 특징:
+- 자동 세션 관리
+- 비밀번호 암호화 검증
+- CSRF 보안
+- 브루트 포스 공격 방지 (선택적)
+- "Remember Me" 기능 (선택적)
+
+이 템플릿은 Django의 기본 AuthenticationForm과 LoginView를 활용하여
+안전하고 사용자 친화적인 로그인 인터페이스를 제공합니다.
+#}

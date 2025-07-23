@@ -1,0 +1,162 @@
+{# base.html 템플릿을 상속받아서 공통 레이아웃 사용 #}
+{% extends 'base.html' %}
+
+{# 페이지 제목을 "메인 페이지 - Django Blog"로 설정 #}
+{# 브라우저 탭에 표시되는 제목 #}
+{% block title %}메인 페이지 - Django Blog{% endblock %}
+
+{# 메인 컨텐츠 영역 시작 #}
+{% block content %}
+
+<!-- 메인 배너 섹션 -->
+<!-- row: Bootstrap 그리드 시스템의 행 -->
+<div class="row">
+    
+    <!-- 전체 너비를 차지하는 컬럼 (12/12) -->
+    <div class="col-md-12">
+        
+        <!-- Jumbotron 컴포넌트: 메인 배너 역할 -->
+        <!-- jumbotron: 큰 배너 영역 (Bootstrap 5에서는 커스텀 클래스) -->
+        <!-- bg-light: 밝은 회색 배경 -->
+        <!-- p-5: padding 5단계 (모든 방향으로 큰 여백) -->
+        <!-- rounded: 모서리 둥글게 -->
+        <div class="jumbotron bg-light p-5 rounded">
+            
+            <!-- 메인 제목 -->
+            <!-- display-4: Bootstrap의 큰 제목 스타일 (display 헤딩) -->
+            <h1 class="display-4">Django Blog에 오신 것을 환영합니다!</h1>
+            
+            <!-- 부제목/설명 -->
+            <!-- lead: Bootstrap의 강조된 문단 스타일 (약간 큰 폰트) -->
+            <p class="lead">여러분의 생각과 이야기를 자유롭게 공유해보세요.</p>
+            
+            <!-- 구분선 -->
+            <!-- hr: 수평선 요소 -->
+            <!-- my-4: margin-y(위아래) 4단계 -->
+            <hr class="my-4">
+            
+            <!-- 안내 문구 -->
+            <p>로그인하여 글을 작성하거나, 다른 사람들의 글을 둘러보세요.</p>
+            
+            <!-- Django 템플릿 조건문: 사용자 인증 상태에 따른 버튼 표시 -->
+            <!-- user.is_authenticated: 현재 사용자의 로그인 상태 확인 -->
+            <!-- not: 논리 부정 연산자 (로그인하지 않은 경우) -->
+            {% if not user.is_authenticated %}
+                
+                <!-- 비로그인 사용자에게 보이는 버튼들 -->
+                
+                <!-- 로그인 버튼 -->
+                <!-- btn btn-primary: Bootstrap 기본(파란색) 버튼 스타일 -->
+                <!-- btn-lg: 큰 크기 버튼 -->
+                <!-- me-2: margin-end(오른쪽) 2단계 (버튼 간격) -->
+                <!-- role="button": 접근성을 위한 역할 정의 -->
+                <a class="btn btn-primary btn-lg me-2" href="{% url 'login' %}" role="button">로그인</a>
+                
+                <!-- 회원가입 버튼 -->
+                <!-- btn-success: Bootstrap 성공(초록색) 버튼 스타일 -->
+                <a class="btn btn-success btn-lg" href="{% url 'signup' %}" role="button">회원가입</a>
+                
+            {% else %}
+                
+                <!-- 로그인 사용자에게 보이는 버튼들 -->
+                
+                <!-- 게시글 목록 보기 버튼 -->
+                <a class="btn btn-primary btn-lg me-2" href="{% url 'posts' %}" role="button">게시글 보기</a>
+                
+                <!-- 새 글 작성 버튼 -->
+                <a class="btn btn-success btn-lg" href="{% url 'post_create' %}" role="button">글 작성하기</a>
+                
+            {% endif %}
+            
+        </div>
+    </div>
+</div>
+
+<!-- 기능 소개 카드 섹션 -->
+<!-- mt-4: margin-top 4단계 (위쪽 여백) -->
+<div class="row mt-4">
+    
+    <!-- 첫 번째 카드: 글 작성 기능 -->
+    <!-- col-md-4: 중간 크기 화면에서 4칸 차지 (전체 12칸 중 1/3) -->
+    <div class="col-md-4">
+        
+        <!-- Bootstrap 카드 컴포넌트 -->
+        <div class="card">
+            
+            <!-- 카드 본문 영역 -->
+            <div class="card-body">
+                
+                <!-- 카드 제목 -->
+                <!-- card-title: Bootstrap 카드 제목 스타일 -->
+                <!-- 📝: 이모지로 시각적 표현 -->
+                <h5 class="card-title">📝 글 작성</h5>
+                
+                <!-- 카드 내용 -->
+                <!-- card-text: Bootstrap 카드 텍스트 스타일 -->
+                <p class="card-text">자유롭게 여러분의 생각을 글로 표현해보세요.</p>
+                
+            </div>
+        </div>
+    </div>
+    
+    <!-- 두 번째 카드: 소통 기능 -->
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                
+                <!-- 👥: 사람들을 나타내는 이모지 -->
+                <h5 class="card-title">👥 소통</h5>
+                <p class="card-text">다른 사용자들과 의견을 나누고 소통해보세요.</p>
+                
+            </div>
+        </div>
+    </div>
+    
+    <!-- 세 번째 카드: 탐색 기능 -->
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                
+                <!-- 🔍: 돋보기를 나타내는 이모지 -->
+                <h5 class="card-title">🔍 탐색</h5>
+                <p class="card-text">다양한 주제의 흥미로운 글들을 발견해보세요.</p>
+                
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+{% endblock %} {# content 블록 끝 #}
+
+{# 
+이 메인 페이지(index.html)의 특징과 기능:
+
+1. 랜딩 페이지 역할:
+   - 사이트 첫 방문자에게 보이는 환영 페이지
+   - 사이트의 목적과 기능을 한눈에 보여줌
+   - 사용자 행동 유도 (로그인, 회원가입, 글쓰기)
+
+2. 적응형 UI:
+   - 로그인 상태에 따라 다른 버튼 표시
+   - 비로그인: 로그인/회원가입 버튼
+   - 로그인: 게시글 보기/글 작성 버튼
+
+3. 반응형 디자인:
+   - col-md-12: 큰 화면에서 전체 너비
+   - col-md-4: 카드들이 큰 화면에서 3등분 배치
+   - 모바일에서는 카드들이 세로로 쌓임
+
+4. 시각적 요소:
+   - Jumbotron으로 시선 집중
+   - 이모지로 직관적 표현
+   - Bootstrap 색상 시스템 활용
+
+5. 사용자 경험:
+   - 명확한 행동 유도 버튼
+   - 사이트 기능에 대한 간단한 소개
+   - 일관된 디자인 언어
+
+이 페이지는 blog/views.py의 index 뷰 함수에서 렌더링되며,
+사용자가 사이트에 첫 방문시 보게 되는 대문 역할을 합니다.
+#}
