@@ -1,29 +1,39 @@
+{# base.html 템플릿을 상속받아 공통 레이아웃 사용 #}
 {% extends 'base.html' %}
 
+{# 페이지 제목 블록: 브라우저 탭에 표시되는 제목 #}
 {% block title %}게시글 목록 - Django Blog{% endblock %}
 
+{# 메인 컨텐츠 블록 시작 #}
 {% block content %}
+
+{# 상단 헤더: 게시글 목록 제목과 새 글 작성 버튼 #}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>📄 게시글 목록</h2>
     {% if user.is_authenticated %}
+        {# 로그인한 사용자에게만 새 글 작성 버튼 표시 #}
         <a href="{% url 'post_create' %}" class="btn btn-primary">✏️ 새 글 작성</a>
     {% endif %}
 </div>
 
+{# 게시글 리스트 영역 #}
 {% if posts %}
     <div class="row">
         {% for post in posts %}
             <div class="col-md-6 mb-4">
                 <div class="card h-100">
                     <div class="card-body">
+                        {# 게시글 제목: 상세 페이지 링크 #}
                         <h5 class="card-title">
                             <a href="{% url 'post_detail' post.pk %}" class="text-decoration-none">
                                 {{ post.title }}
                             </a>
                         </h5>
+                        {# 게시글 내용: 20단어로 요약 #}
                         <p class="card-text">
                             {{ post.content|truncatewords:20 }}
                         </p>
+                        {# 작성자와 작성일 정보 #}
                         <div class="card-text">
                             <small class="text-muted">
                                 👤 {{ post.author.username }} | 
@@ -32,9 +42,11 @@
                         </div>
                     </div>
                     <div class="card-footer">
+                        {# 자세히 보기 버튼: 모든 사용자에게 표시 #}
                         <a href="{% url 'post_detail' post.pk %}" class="btn btn-outline-primary btn-sm">
                             자세히 보기
                         </a>
+                        {# 수정 버튼: 게시글 작성자에게만 표시 #}
                         {% if user == post.author %}
                             <a href="{% url 'post_edit' post.pk %}" class="btn btn-outline-secondary btn-sm">
                                 수정
@@ -46,6 +58,7 @@
         {% endfor %}
     </div>
 {% else %}
+    {# 게시글이 없을 때 안내 메시지 #}
     <div class="text-center mt-5">
         <div class="alert alert-info">
             <h4>📝 아직 작성된 게시글이 없습니다.</h4>
@@ -59,7 +72,9 @@
     </div>
 {% endif %}
 
+{# 하단 네비게이션: 메인 페이지로 이동 버튼 #}
 <div class="text-center mt-4">
     <a href="{% url 'index' %}" class="btn btn-secondary">🏠 메인 페이지로</a>
 </div>
+
 {% endblock %}
