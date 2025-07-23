@@ -1,0 +1,142 @@
+<!-- HTML5 문서 선언 -->
+<!DOCTYPE html>
+
+<!-- 한국어 설정으로 HTML 문서 시작 -->
+<html lang="ko">
+
+<head>
+    <!-- 문자 인코딩을 UTF-8로 설정 (한글 등 모든 문자 지원) -->
+    <meta charset="UTF-8">
+    
+    <!-- 반응형 웹 디자인을 위한 뷰포트 설정 -->
+    <!-- 모바일 기기에서 페이지를 적절한 크기로 표시 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- 페이지 제목 설정 -->
+    <!-- Django 템플릿 블록: 하위 템플릿에서 title을 재정의할 수 있음 -->
+    <!-- 기본값: "Django Blog", 하위 템플릿에서 {% block title %}새 제목{% endblock %}으로 변경 가능 -->
+    <title>{% block title %}Django Blog{% endblock %}</title>
+    
+    <!-- Bootstrap 5.1.3 CSS 프레임워크 로드 (CDN 방식) -->
+    <!-- 반응형 디자인, 컴포넌트, 유틸리티 클래스 제공 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <!-- 상단 네비게이션 바 -->
+    <!-- navbar: Bootstrap 네비게이션 컴포넌트 -->
+    <!-- navbar-expand-lg: 큰 화면에서 가로로 펼쳐짐 -->
+    <!-- navbar-dark: 어두운 테마 -->
+    <!-- bg-dark: 어두운 배경색 -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        
+        <!-- 네비게이션 내용을 중앙 정렬하는 컨테이너 -->
+        <div class="container">
+            
+            <!-- 사이트 로고/브랜드 링크 -->
+            <!-- {% url 'index' %}: Django URL 패턴 'index'에 해당하는 실제 URL로 변환 -->
+            <!-- 예: {% url 'index' %} → "/" 또는 "/home/" -->
+            <a class="navbar-brand" href="{% url 'index' %}">Django Blog</a>
+            
+            <!-- 네비게이션 메뉴 (오른쪽 정렬) -->
+            <!-- ms-auto: Bootstrap에서 margin-left: auto (오른쪽으로 밀기) -->
+            <div class="navbar-nav ms-auto">
+                
+                <!-- Django 템플릿 조건문: 사용자 로그인 상태 확인 -->
+                <!-- user.is_authenticated: 현재 사용자가 로그인되어 있는지 확인 -->
+                {% if user.is_authenticated %}
+                    
+                    <!-- 로그인된 사용자에게만 보이는 메뉴들 -->
+                    
+                    <!-- 게시글 목록 페이지 링크 -->
+                    <a class="nav-link" href="{% url 'posts' %}">게시글 목록</a>
+                    
+                    <!-- 새 글 작성 페이지 링크 -->
+                    <a class="nav-link" href="{% url 'post_create' %}">글 작성</a>
+                    
+                    <!-- 로그아웃 링크 (현재 사용자 이름 표시) -->
+                    <!-- {{ user.username }}: 현재 로그인한 사용자의 사용자명 출력 -->
+                    <a class="nav-link" href="{% url 'logout' %}">로그아웃 ({{ user.username }})</a>
+                    
+                {% else %}
+                    
+                    <!-- 로그인되지 않은 사용자에게만 보이는 메뉴들 -->
+                    
+                    <!-- 로그인 페이지 링크 -->
+                    <a class="nav-link" href="{% url 'login' %}">로그인</a>
+                    
+                    <!-- 회원가입 페이지 링크 -->
+                    <a class="nav-link" href="{% url 'signup' %}">회원가입</a>
+                    
+                {% endif %}
+                
+            </div>
+        </div>
+    </nav>
+
+    <!-- 메인 컨텐츠 영역 -->
+    <!-- container: Bootstrap 컨테이너 (반응형 너비) -->
+    <!-- mt-4: margin-top 4단계 (상단 여백) -->
+    <div class="container mt-4">
+        
+        <!-- Django 메시지 프레임워크 활용한 알림 표시 -->
+        <!-- messages: views.py에서 messages.success(), messages.error() 등으로 추가한 메시지들 -->
+        {% if messages %}
+            
+            <!-- 각 메시지를 순회하며 표시 -->
+            {% for message in messages %}
+                
+                <!-- Bootstrap Alert 컴포넌트 -->
+                <!-- alert-{{ message.tags }}: 메시지 타입에 따른 스타일 -->
+                <!-- message.tags 예시: 'success' → 'alert-success' (초록색) -->
+                <!-- message.tags 예시: 'error' → 'alert-error' (빨간색) -->
+                <!-- alert-dismissible: 닫기 버튼 활성화 -->
+                <!-- fade show: 페이드 인/아웃 애니메이션 -->
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    
+                    <!-- 실제 메시지 내용 출력 -->
+                    <!-- 예: "게시글이 성공적으로 저장되었습니다." -->
+                    {{ message }}
+                    
+                    <!-- 알림을 닫을 수 있는 X 버튼 -->
+                    <!-- data-bs-dismiss="alert": Bootstrap JavaScript로 알림 닫기 -->
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    
+                </div>
+                
+            {% endfor %}
+            
+        {% endif %}
+
+        <!-- 메인 컨텐츠 블록 -->
+        <!-- 하위 템플릿에서 이 부분을 재정의하여 실제 페이지 내용 삽입 -->
+        <!-- 예: {% block content %}게시글 목록...{% endblock %} -->
+        {% block content %}
+        {% endblock %}
+        
+    </div>
+
+    <!-- Bootstrap JavaScript 라이브러리 로드 (CDN 방식) -->
+    <!-- 드롭다운, 모달, 알림 닫기 등의 인터랙티브 기능 제공 -->
+    <!-- bundle.min.js: Popper.js가 포함된 완전한 Bundle 버전 -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+</body>
+</html>
+
+{# Django 템플릿 주석 - HTML에는 나타나지 않음 #}
+{# 
+이 파일은 모든 페이지의 기본 레이아웃을 제공하는 베이스 템플릿입니다.
+하위 템플릿들이 이 파일을 상속받아서 content 블록만 재정의하면 됩니다.
+
+사용 방법:
+1. 하위 템플릿에서 {% extends 'base.html' %} 선언
+2. {% block content %}실제 내용{% endblock %}으로 내용 작성
+3. 선택적으로 {% block title %}페이지 제목{% endblock %}으로 제목 변경
+
+장점:
+- 일관된 디자인과 네비게이션
+- 중복 코드 제거
+- 사이트 전체 스타일 일괄 변경 가능
+- 반응형 디자인 자동 적용
+#}

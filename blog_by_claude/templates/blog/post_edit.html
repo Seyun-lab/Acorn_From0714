@@ -1,0 +1,294 @@
+{# base.html 템플릿을 상속받아서 공통 레이아웃 사용 #}
+{% extends 'base.html' %}
+
+{# 페이지 제목을 "글 수정 - Django Blog"로 설정 #}
+{# 브라우저 탭에 표시되는 제목 #}
+{% block title %}글 수정 - Django Blog{% endblock %}
+
+{# 메인 컨텐츠 영역 시작 #}
+{% block content %}
+
+<!-- Bootstrap 그리드 시스템: 폼을 화면 중앙에 배치 -->
+<!-- row: Bootstrap 행 생성 -->
+<!-- justify-content-center: 자식 요소들을 수평 중앙 정렬 -->
+<div class="row justify-content-center">
+    
+    <!-- 중간 크기 화면에서 8칸 차지 (전체 12칸 중 2/3) -->
+    <!-- 수정 폼은 적당한 너비로 설정하여 사용성 향상 -->
+    <div class="col-md-8">
+        
+        <!-- Bootstrap 카드 컴포넌트: 폼을 깔끔한 박스로 감싸기 -->
+        <div class="card">
+            
+            <!-- 카드 헤더: 제목과 원본 게시글 정보 -->
+            <div class="card-header">
+                
+                <!-- 수정 페이지 제목 -->
+                <!-- ✏️: 편집을 나타내는 이모지 -->
+                <h3>✏️ 글 수정</h3>
+                
+                <!-- 원본 게시글의 작성일 표시 -->
+                <!-- text-muted: Bootstrap 흐린 회색 텍스트 -->
+                <!-- small: 작은 크기 텍스트 -->
+                <!-- {{ post.created_at|date:"Y년 m월 d일 H:i" }}: 작성일 포맷팅 -->
+                <small class="text-muted">작성일: {{ post.created_at|date:"Y년 m월 d일 H:i" }}</small>
+                
+            </div>
+            
+            <!-- 카드 본문: 실제 수정 폼이 들어가는 영역 -->
+            <div class="card-body">
+                
+                <!-- 게시글 수정 폼 시작 -->
+                <!-- method="post": HTTP POST 방식으로 데이터 전송 -->
+                <!-- action 속성 생략: 현재 URL로 폼 데이터 전송 -->
+                <form method="post">
+                    
+                    <!-- CSRF 토큰: Django 보안 기능 -->
+                    <!-- Cross-Site Request Forgery 공격 방지 -->
+                    {% csrf_token %}
+                    
+                    <!-- 제목 수정 필드 -->
+                    <!-- mb-3: margin-bottom 3단계 (필드 간 간격) -->
+                    <div class="mb-3">
+                        
+                        <!-- 제목 필드 라벨 -->
+                        <!-- for 속성: 클릭시 해당 input으로 포커스 이동 -->
+                        <!-- form.title.id_for_label: Django 폼 필드의 고유 ID 가져오기 -->
+                        <label for="{{ form.title.id_for_label }}" class="form-label">제목</label>
+                        
+                        <!-- Django PostForm의 title 필드 렌더링 -->
+                        <!-- forms.py에서 PostForm(instance=post)로 기존 데이터가 채워진 상태 -->
+                        <!-- 실제 생성: <input type="text" name="title" value="기존제목" ...> -->
+                        {{ form.title }}
+                        
+                        <!-- 제목 필드 에러 메시지 표시 -->
+                        <!-- form.title.errors: 제목 필드 유효성 검사 실패시 에러 리스트 -->
+                        {% if form.title.errors %}
+                            
+                            <!-- text-danger: Bootstrap 위험(빨간색) 텍스트 스타일 -->
+                            <div class="text-danger">
+                                
+                                <!-- 해당 필드의 모든 에러 메시지를 순회하며 표시 -->
+                                {% for error in form.title.errors %}
+                                    <!-- 예: "이 필드는 필수입니다.", "제목이 너무 깁니다." -->
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                                
+                            </div>
+                            
+                        {% endif %}
+                        
+                    </div>
+                    
+                    <!-- 내용 수정 필드 -->
+                    <div class="mb-3">
+                        
+                        <!-- 내용 필드 라벨 -->
+                        <label for="{{ form.content.id_for_label }}" class="form-label">내용</label>
+                        
+                        <!-- Django PostForm의 content 필드 렌더링 -->
+                        <!-- Textarea 위젯으로 기존 내용이 미리 채워진 상태 -->
+                        <!-- 실제 생성: <textarea name="content">기존내용...</textarea> -->
+                        {{ form.content }}
+                        
+                        <!-- 내용 필드 에러 메시지 표시 -->
+                        {% if form.content.errors %}
+                            <div class="text-danger">
+                                {% for error in form.content.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        
+                    </div>
+                    
+                    <!-- 버튼 그룹: 액션 버튼들을 좌우로 배치 -->
+                    <!-- d-flex: Flexbox 레이아웃 -->
+                    <!-- gap-2: 자식 요소 간 2단계 간격 -->
+                    <!-- justify-content-between: 좌우 양끝 정렬 -->
+                    <div class="d-flex gap-2 justify-content-between">
+                        
+                        <!-- 왼쪽 버튼 그룹: 수정/취소 -->
+                        <div>
+                            
+                            <!-- 수정 완료 버튼 -->
+                            <!-- type="submit": 폼 제출 기능 -->
+                            <!-- btn btn-success: Bootstrap 성공(초록색) 버튼 스타일 -->
+                            <!-- 💾: 저장을 나타내는 이모지 (플로피 디스크) -->
+                            <button type="submit" class="btn btn-success">💾 수정 완료</button>
+                            
+                            <!-- 취소 버튼 -->
+                            <!-- a 태그: 링크로 구현 (페이지 이동) -->
+                            <!-- btn btn-secondary: Bootstrap 보조(회색) 버튼 스타일 -->
+                            <!-- {% url 'post_detail' post.pk %}: 원본 게시글 상세보기로 이동 -->
+                            <!-- post.pk: 현재 게시글의 Primary Key -->
+                            <!-- ❌: 취소를 나타내는 이모지 -->
+                            <a href="{% url 'post_detail' post.pk %}" class="btn btn-secondary">❌ 취소</a>
+                            
+                        </div>
+                        
+                        <!-- 오른쪽 버튼: 삭제 (위험한 액션이므로 분리 배치) -->
+                        <!-- type="button": JavaScript 액션용 버튼 (폼 제출 아님) -->
+                        <!-- btn-danger: Bootstrap 위험(빨간색) 버튼 스타일 -->
+                        <!-- data-bs-toggle="modal": Bootstrap 모달 트리거 -->
+                        <!-- data-bs-target="#deleteModal": 타겟 모달 ID 지정 -->
+                        <!-- 🗑️: 휴지통을 나타내는 이모지 -->
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                            🗑️ 삭제하기
+                        </button>
+                        
+                    </div>
+                    
+                </form>
+            </div>
+        </div>
+        
+        <!-- 주의사항 안내 영역 -->
+        <!-- mt-3: margin-top 3단계 (카드와 간격 두기) -->
+        <div class="mt-3">
+            
+            <!-- Bootstrap Alert 컴포넌트: 정보 알림 (파란색) -->
+            <!-- alert alert-info: 정보성 알림 스타일 -->
+            <div class="alert alert-info">
+                
+                <!-- 안내 제목 -->
+                <!-- h6: 6단계 제목 (작은 크기) -->
+                <!-- 📝: 메모를 나타내는 이모지 -->
+                <h6>📝 수정 시 주의사항</h6>
+                
+                <!-- 주의사항 리스트 -->
+                <!-- mb-0: margin-bottom 0 (아래쪽 여백 제거) -->
+                <ul class="mb-0">
+                    <li>수정된 내용은 즉시 반영됩니다.</li>
+                    <li>수정 시간이 게시글에 표시됩니다.</li>
+                    <li>삭제된 게시글은 복구할 수 없습니다.</li>
+                </ul>
+                
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+<!-- 삭제 확인 모달 -->
+<!-- modal fade: Bootstrap 모달 기본 클래스와 페이드 애니메이션 -->
+<!-- id="deleteModal": JavaScript와 data-bs-target에서 참조할 고유 ID -->
+<!-- tabindex="-1": 키보드 탭 순서에서 제외 -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    
+    <!-- 모달 다이얼로그 컨테이너 -->
+    <div class="modal-dialog">
+        
+        <!-- 모달 콘텐츠 -->
+        <div class="modal-content">
+            
+            <!-- 모달 헤더 -->
+            <div class="modal-header">
+                
+                <!-- 모달 제목 -->
+                <h5 class="modal-title">게시글 삭제</h5>
+                
+                <!-- 모달 닫기 버튼 (X) -->
+                <!-- btn-close: Bootstrap 5의 닫기 버튼 스타일 -->
+                <!-- data-bs-dismiss="modal": 모달 닫기 액션 -->
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                
+            </div>
+            
+            <!-- 모달 본문 -->
+            <div class="modal-body">
+                
+                <!-- 삭제 확인 메시지 -->
+                <p>정말로 이 게시글을 삭제하시겠습니까?</p>
+                
+                <!-- 삭제할 게시글 제목 강조 표시 -->
+                <!-- strong: 굵은 글씨로 제목 강조 -->
+                <strong>"{{ post.title }}"</strong>
+                
+                <!-- 경고 메시지 -->
+                <!-- text-danger: Bootstrap 위험(빨간색) 텍스트 -->
+                <!-- mt-2: margin-top 2단계 -->
+                <!-- ⚠️: 경고를 나타내는 이모지 -->
+                <p class="text-danger mt-2">⚠️ 삭제된 게시글은 복구할 수 없습니다.</p>
+                
+            </div>
+            
+            <!-- 모달 푸터: 액션 버튼들 -->
+            <div class="modal-footer">
+                
+                <!-- 취소 버튼 -->
+                <!-- btn-secondary: Bootstrap 보조(회색) 버튼 -->
+                <!-- data-bs-dismiss="modal": 모달 닫기 -->
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                
+                <!-- 삭제 확인 폼 -->
+                <!-- action="#": 현재 페이지로 제출 (수정 페이지에서 삭제 처리) -->
+                <!-- method="post": HTTP POST 방식 -->
+                <!-- style="display: inline;": 버튼과 같은 줄에 배치 -->
+                <form action="#" method="post" style="display: inline;">
+                    
+                    <!-- CSRF 토큰: 보안을 위한 필수 요소 -->
+                    {% csrf_token %}
+                    
+                    <!-- 삭제 액션 식별용 히든 필드 -->
+                    <!-- views.py에서 request.POST.get('delete') == 'true'로 삭제 요청 확인 -->
+                    <!-- 수정 요청과 삭제 요청을 구분하기 위함 -->
+                    <input type="hidden" name="delete" value="true">
+                    
+                    <!-- 최종 삭제 버튼 -->
+                    <!-- type="submit": 폼 제출 -->
+                    <!-- btn-danger: Bootstrap 위험(빨간색) 버튼 -->
+                    <button type="submit" class="btn btn-danger">삭제하기</button>
+                    
+                </form>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %} {# content 블록 끝 #}
+
+{# 
+이 게시글 수정 페이지의 특징과 기능:
+
+1. 기존 데이터 미리 채움:
+   - PostForm(instance=post)로 기존 게시글 데이터를 폼에 미리 채워서 표시
+   - 사용자는 기존 내용을 보면서 수정 가능
+   - 원본 작성일 정보도 표시하여 컨텍스트 제공
+
+2. 수정과 삭제 기능 통합:
+   - 하나의 페이지에서 수정과 삭제 모두 가능
+   - 수정: POST 요청에서 delete 필드 없음
+   - 삭제: POST 요청에서 delete=true 히든 필드 포함
+   - views.py에서 request.POST.get('delete') 확인하여 액션 구분
+
+3. 사용자 경험 최적화:
+   - 취소 버튼은 원본 게시글 상세보기로 이동 (컨텍스트 유지)
+   - 삭제는 모달로 2단계 확인 (실수 방지)
+   - 주의사항 알림으로 사용자에게 명확한 정보 제공
+
+4. 안전한 삭제 시스템:
+   - Bootstrap 모달로 삭제 확인
+   - 게시글 제목 표시로 삭제 대상 명확화
+   - 복구 불가능 경고로 신중한 결정 유도
+   - CSRF 토큰으로 보안 강화
+
+5. 작동 과정:
+   GET 요청 (수정 페이지 진입):
+   - views.py에서 Post 객체 조회
+   - PostForm(instance=post)로 기존 데이터가 채워진 폼 생성
+   - 템플릿 렌더링하여 수정 가능한 폼 표시
+   
+   POST 요청 (수정):
+   - delete 필드 없음
+   - PostForm(request.POST, instance=post)로 기존 객체 업데이트
+   - 성공시 게시글 상세보기로 리다이렉트
+   
+   POST 요청 (삭제):
+   - delete=true 히든 필드 포함
+   - Post 객체 삭제 후 목록 페이지로 리다이렉트
+
+이 템플릿은 게시글의 수정과 삭제를 안전하고 직관적으로 처리할 수 있도록
+설계된 완전한 게시글 관리 인터페이스를 제공합니다.
+#}
