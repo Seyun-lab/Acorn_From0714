@@ -9,7 +9,7 @@ from .models import Post # Post 모델을 가져옵니다.
 from .forms import PostForm # PostForm을 가져옵니다.
 
 # Create your views here.
-
+    
 # 루트 페이지 뷰 함수
 def index(request): # 루트 페이지를 렌더링하는 함수
     return render(request, 'blog/index.html') # templates/blog/index.html 파일을 렌더링합니다.
