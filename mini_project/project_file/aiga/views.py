@@ -55,10 +55,10 @@ def register(request):
             return redirect('aiga:login')  # 등록 후 로그인 페이지로 이동
     return render(request, 'register.html')
 
-# 로그인 성공 메시지
-def in_notice(request):
-    login_success = request.session.pop('login_success', False)
-    return render(request, 'in_notice.html', {'login_success': login_success})
+# 게시글 페이지
+def m_notice(request):
+    return render(request, 'm_notice.html')
+
 
 
 # DB 연결 처리 예시 ----------------------------------------------------------------
