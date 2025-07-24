@@ -1,3 +1,9 @@
+{% if error %}
+<script>
+  alert('{{ error }}');
+</script>
+{% endif %}
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -47,11 +53,12 @@
     <div class="register-container">
         <div class="register-box">
             <img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png" alt="Logo" class="logo">
-            <form id="registerForm">
-                <input type="text" id="username" placeholder="아이디" required class="input-field">
-                <input type="text" id="nickname" placeholder="닉네임" required class="input-field">
-                <input type="password" id="password1" placeholder="비밀번호" required class="input-field">
-                <input type="password" id="password2" placeholder="비밀번호 확인" required class="input-field">
+            <form id="registerForm" method="post" action="{% url 'aiga:register' %}">
+                {% csrf_token %}
+                <input type="text" id="username" name="username" placeholder="아이디" class="input-field">
+                <input type="text" id="nickname" name="nickname" placeholder="닉네임" class="input-field">
+                <input type="password" id="password1" name="password1" placeholder="비밀번호" class="input-field">
+                <input type="password" id="password2" name="password2" placeholder="비밀번호 확인" class="input-field">
                 <button type="submit" class="submit-button">회원가입</button>
                 <div id="message"></div>
             </form>
@@ -59,8 +66,6 @@
     </div>
 <script>
 document.getElementById('registerForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-
     // 입력값 가져오기
     const username = document.getElementById('username').value.trim();
     const nickname = document.getElementById('nickname').value.trim();
@@ -70,21 +75,17 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
 
     // 검증 로직
     if (!username || !nickname || !password1 || !password2) {
-        message.textContent = '모든 항목을 입력해 주세요.';
-        message.className = "error-message";
+        e.preventDefault();
+        alert('모든 항목을 입력해 주세요.');
         return;
     }
 
     if (password1 !== password2) {
-        message.textContent = '비밀번호가 일치하지 않습니다.';
-        message.className = "error-message";
+        e.preventDefault();
+        alert('비밀번호가 일치하지 않습니다.');
         return;
     }
-
-    // 간단한 테스트니까, 실제 회원가입 처리는 없음
-    message.textContent = '회원가입이 완료되었습니다!';
-    message.className = "success-message";
-    // 이곳에서 서버 전송 로직을 추가할 수 있습니다.
+    // 통과 시 서버로 submit
 });
 </script>
 </body>

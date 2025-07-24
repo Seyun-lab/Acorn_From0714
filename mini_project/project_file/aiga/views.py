@@ -31,10 +31,32 @@ def login(request):
                 return render(request, 'login.html', {'error': '비밀번호가 올바르지 않습니다.'})
     return render(request, 'login.html')
 
+def register(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        nickname = request.POST.get('nickname')
+        password1 = request.POST.get('password1')
+        password2 = request.POST.get('password2')
+        import uuid
+        with connection.cursor() as cursor:
+            # ID 중복 확인
+            cursor.execute("SELECT * FROM users WHERE username=%s", [username])
+            if cursor.fetchone():
+                return render(request, 'register.html', {'error': '이미 존재하는 ID입니다.'})
+            # 사용자 등록 (pid는 UUID)
+            pid = str(uuid.uuid4())
+            cursor.execute("INSERT INTO users (pid, username, password, nickname) VALUES (%s, %s, %s, %s)", [pid, username, password1, nickname])
+            connection.commit()
+            return redirect('aiga:login')  # 등록 후 로그인 페이지로 이동
+    return render(request, 'register.html')
+
 def in_notice(request):
     login_success = request.session.pop('login_success', False)
     return render(request, 'in_notice.html', {'login_success': login_success})
-  
+
+
+# DB 연결 처리 예시 ----------------------------------------------------------------
+
 # DB 연결 함수 (mysqlclient)
 def get_connection():
     db = settings.DATABASES['default']

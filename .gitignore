@@ -1,3 +1,7 @@
+# Python virtual environments
+venv/
+mini_project/venv/
+virtual_environment/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
