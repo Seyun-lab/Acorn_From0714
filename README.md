@@ -1,4 +1,4 @@
-# Acorn_From0714
+# Acorn_From0714 레포지토리
 
 ## 가상환경
 pip install -r requirements.txt
