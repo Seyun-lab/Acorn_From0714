@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}메인 페이지 - Django Blog{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="jumbotron bg-light p-5 rounded">
+            <h1 class="display-4">Django Blog에 오신 것을 환영합니다!</h1>
+            <p class="lead">여러분의 생각과 이야기를 자유롭게 공유해보세요.</p>
+            <hr class="my-4">
+            <p>로그인하여 글을 작성하거나, 다른 사람들의 글을 둘러보세요.</p>
+            {% if not user.is_authenticated %}
+                <a class="btn btn-primary btn-lg me-2" href="{% url 'login' %}" role="button">로그인</a>
+                <a class="btn btn-success btn-lg" href="{% url 'signup' %}" role="button">회원가입</a>
+            {% else %}
+                <a class="btn btn-primary btn-lg me-2" href="{% url 'posts' %}" role="button">게시글 보기</a>
+                <a class="btn btn-success btn-lg" href="{% url 'post_create' %}" role="button">글 작성하기</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">📝 글 작성</h5>
+                <p class="card-text">자유롭게 여러분의 생각을 글로 표현해보세요.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">👥 소통</h5>
+                <p class="card-text">다른 사용자들과 의견을 나누고 소통해보세요.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">🔍 탐색</h5>
+                <p class="card-text">다양한 주제의 흥미로운 글들을 발견해보세요.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
