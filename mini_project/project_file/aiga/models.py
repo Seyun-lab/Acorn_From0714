@@ -1,3 +1,1 @@
-from django.db import models
-
-# Create your models here.
+managed = False # django 접근 막는 명령
