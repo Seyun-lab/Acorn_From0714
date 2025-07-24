@@ -1,1 +1,0 @@
-managed = False # django 접근 막는 명령
