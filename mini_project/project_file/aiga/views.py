@@ -5,7 +5,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings  # settings.py에서 DB 정보 불러오기
 import MySQLdb  # mysqlclient 사용
 import json
-
+import uuid
+        
 def index(request):
     return render(request, 'index.html')
 
@@ -36,8 +37,7 @@ def register(request):
         username = request.POST.get('username')
         nickname = request.POST.get('nickname')
         password1 = request.POST.get('password1')
-        password2 = request.POST.get('password2')
-        import uuid
+
         with connection.cursor() as cursor:
             # ID 중복 확인
             cursor.execute("SELECT * FROM users WHERE username=%s", [username])
