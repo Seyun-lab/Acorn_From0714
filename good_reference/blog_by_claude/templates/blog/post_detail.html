@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ post.title }} - Django Blog{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <article class="card">
+            <div class="card-header">
+                <h1 class="card-title mb-0">{{ post.title }}</h1>
+                <div class="text-muted mt-2">
+                    <small>
+                        👤 작성자: <strong>{{ post.author.username }}</strong> | 
+                        📅 작성일: {{ post.created_at|date:"Y년 m월 d일 H:i" }}
+                        {% if post.updated_at != post.created_at %}
+                            | ✏️ 수정일: {{ post.updated_at|date:"Y년 m월 d일 H:i" }}
+                        {% endif %}
+                    </small>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="post-content">
+                    {{ post.content|linebreaks }}
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <a href="{% url 'posts' %}" class="btn btn-outline-secondary">
+                            📋 목록으로
+                        </a>
+                        <a href="{% url 'index' %}" class="btn btn-outline-primary">
+                            🏠 메인으로
+                        </a>
+                    </div>
+                    
+                    {% if user == post.author %}
+                        <div>
+                            <a href="{% url 'post_edit' post.pk %}" class="btn btn-warning">
+                                ✏️ 수정하기
+                            </a>
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                🗑️ 삭제하기
+                            </button>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </article>
+    </div>
+</div>
+
+<!-- 삭제 확인 모달 -->
+{% if user == post.author %}
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">게시글 삭제</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>정말로 이 게시글을 삭제하시겠습니까?</p>
+                <strong>"{{ post.title }}"</strong>
+                <p class="text-danger mt-2">⚠️ 삭제된 게시글은 복구할 수 없습니다.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                <form method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="delete" value="true">
+                    <button type="submit" class="btn btn-danger">삭제하기</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<style>
+.post-content {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #333;
+}
+.card-title {
+    color: #2c3e50;
+}
+</style>
+{% endblock %}

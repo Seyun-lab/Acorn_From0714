@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}로그인 - Django Blog{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="text-center">로그인</h3>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="{{ form.username.id_for_label }}" class="form-label">사용자명</label>
+                        {{ form.username }}
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.password.id_for_label }}" class="form-label">비밀번호</label>
+                        {{ form.password }}
+                    </div>
+                    
+                    {% if form.errors %}
+                        <div class="alert alert-danger">
+                            {{ form.errors }}
+                        </div>
+                    {% endif %}
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">로그인</button>
+                    </div>
+                </form>
+                
+                <div class="text-center mt-3">
+                    <p>계정이 없으신가요? <a href="{% url 'signup' %}">회원가입</a></p>
+                    <p><a href="{% url 'index' %}">메인 페이지로 돌아가기</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+#id_username, #id_password {
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    margin-bottom: 0.5rem;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+}
+</style>
+{% endblock %}
