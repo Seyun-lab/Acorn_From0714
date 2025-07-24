@@ -3,12 +3,18 @@ from django.db import connection
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings  # settings.py에서 DB 정보 불러오기
+from django.utils import timezone
 import MySQLdb  # mysqlclient 사용
 import json
+import uuid
+from datetime import datetime
 
+
+# 시작 페이지
 def index(request):
     return render(request, 'index.html')
 
+# 로그인
 def login(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -31,13 +37,12 @@ def login(request):
                 return render(request, 'login.html', {'error': '비밀번호가 올바르지 않습니다.'})
     return render(request, 'login.html')
 
+# 회원가입
 def register(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         nickname = request.POST.get('nickname')
         password1 = request.POST.get('password1')
-        password2 = request.POST.get('password2')
-        import uuid
         with connection.cursor() as cursor:
             # ID 중복 확인
             cursor.execute("SELECT * FROM users WHERE username=%s", [username])
@@ -50,6 +55,7 @@ def register(request):
             return redirect('aiga:login')  # 등록 후 로그인 페이지로 이동
     return render(request, 'register.html')
 
+# 로그인 성공 메시지
 def in_notice(request):
     login_success = request.session.pop('login_success', False)
     return render(request, 'in_notice.html', {'login_success': login_success})
