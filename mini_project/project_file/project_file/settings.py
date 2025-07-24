@@ -4,7 +4,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
@@ -14,11 +13,7 @@ SECRET_KEY = 'django-insecure-@u0iqtt4w#w4x6j5#sz+g(b$!^x6mepy*k7v=1^a@bqh3xh2oj
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
-
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -28,6 +23,23 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'aiga',
 ]
+
+# --------------Database--------------
+
+ALLOWED_HOSTS = []
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'mydb',      # MariaDB에 생성한 DB명
+        'USER': 'root',      # MariaDB 사용자명
+        'PASSWORD': '1234',  # MariaDB 비밀번호
+        'HOST': 'localhost',
+        'PORT': '3306',
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
+    }
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -57,25 +69,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'project_file.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'mydb',      # MariaDB에 생성한 DB명
-        'USER': 'root',      # MariaDB 사용자명
-        'PASSWORD': '1234',  # MariaDB 비밀번호
-        'HOST': 'localhost',
-        'PORT': '3306',
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        },
-    }
-}
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
