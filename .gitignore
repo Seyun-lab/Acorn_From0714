@@ -24,7 +24,8 @@ var/
 *.egg
 
 # Virtual environments
-venv/
+mini_project/venv/
+mini_project/venv/Lib
 ENV/
 env/
 .venv/
