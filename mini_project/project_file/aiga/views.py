@@ -122,6 +122,9 @@ def in_notice(request):
         'nickname': nickname,
     })
 
+def logout(request):
+    request.session.flush()  # 모든 세션 데이터 삭제
+    return redirect('aiga:login')
 
 # DB 연결 처리 예시 ----------------------------------------------------------------
 # DB 연결 함수 (mysqlclient)
