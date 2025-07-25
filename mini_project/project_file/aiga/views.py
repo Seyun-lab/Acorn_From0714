@@ -13,6 +13,7 @@ import datetime
 def index(request):
     return render(request, 'index.html')
 
+
 # 로그인
 def login(request):
     if request.method == 'POST':
@@ -36,6 +37,7 @@ def login(request):
                 return render(request, 'login.html', {'error': '비밀번호가 올바르지 않습니다.'})
     return render(request, 'login.html')
 
+
 # 회원가입
 def register(request):
     if request.method == 'POST':
@@ -54,20 +56,21 @@ def register(request):
             return redirect('aiga:login')  # 등록 후 로그인 페이지로 이동
     return render(request, 'register.html')
 
+
 # 게시글 페이지
 def m_notice(request):
     if 'user' not in request.session:
-        return redirect('aiga:login')  # 비로그인 사용자는 로그인 페이지로 리디렉션
+        return redirect('aiga:login')  # 비로그인 사용자는 로그인 페이지로 리다이렉트
 
     username = request.session['user']
     with connection.cursor() as cursor:
         # 닉네임 가져오기
         cursor.execute("SELECT nickname, pid FROM users WHERE username = %s", [username])
-        user = cursor.fetchone()
-        if not user:
+        user_data = cursor.fetchone()
+        if not user_data:
             return redirect('aiga:login')
 
-        nickname, user_pid = user
+        nickname, user_pid = user_data
 
         # 해당 유저의 게시글 가져오기
         cursor.execute("SELECT title FROM notes WHERE user_pid = %s ORDER BY last_modified DESC", [user_pid])
@@ -78,6 +81,7 @@ def m_notice(request):
         'posts': posts,
     })
 
+
 # 게시글 작성
 @csrf_exempt
 def in_notice(request):
@@ -87,15 +91,15 @@ def in_notice(request):
 
         title = request.POST.get('title')
         content = request.POST.get('content')
-        user_name = request.session['user']
+        username = request.session['user']
 
         with connection.cursor() as cursor:
-            cursor.execute("SELECT pid FROM users WHERE username=%s", [user_name])
+            cursor.execute("SELECT nickname, pid FROM users WHERE username=%s", [username])
             user_data = cursor.fetchone()
             if not user_data:
                 return render(request, 'in_notice.html', {'error': '사용자 정보를 찾을 수 없습니다.'})
 
-            user_pid = user_data[0]
+            nickname, user_pid = user_data
             note_id = str(uuid.uuid4())
             now = datetime.datetime.now()
 
@@ -106,14 +110,20 @@ def in_notice(request):
             connection.commit()
 
         return redirect('aiga:m_notice')  # 게시글 목록 페이지로 리다이렉트
+    
+    username = request.session['user']
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT nickname FROM users WHERE username=%s", [username])
+        user_data = cursor.fetchone()
+        nickname = user_data[0]
 
     # GET 요청 시: 작성 폼 보여주기
-    return render(request, 'in_notice.html')
-
+    return render(request, 'in_notice.html', {
+        'nickname': nickname,
+    })
 
 
 # DB 연결 처리 예시 ----------------------------------------------------------------
-
 # DB 연결 함수 (mysqlclient)
 def get_connection():
     db = settings.DATABASES['default']
@@ -125,6 +135,7 @@ def get_connection():
         db=db['NAME'],
         charset='utf8'
     )
+
 
 @csrf_exempt
 def save_data(request):
@@ -144,6 +155,7 @@ def save_data(request):
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
 
+
 def get_data(request):
     try:
         conn = get_connection()
@@ -155,4 +167,4 @@ def get_data(request):
         data = [{'name': r[0], 'number': r[1]} for r in rows]
         return JsonResponse({'data': data})
     except Exception as e:
-        return JsonResponse({'status': 'error', 'message': str(e)})  
+        return JsonResponse({'status': 'error', 'message': str(e)})
