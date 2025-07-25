@@ -1,7 +1,9 @@
 # Acorn_From0714 레포지토리
 
 ## 가상환경
-pip install -r requirements.txt
+1. python -m venv myproject
+
+2. pip install -r requirements.txt
 경로: cd C:\Users\SeYun\Acorn_From0714\mini_project\project_file
 
 ## 적용돼있는 기능
