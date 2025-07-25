@@ -116,7 +116,7 @@
   <!-- 사이드바 -->
   <div class="sidebar">
     <div class="sidebar-top">
-      <div class="nickname">홍길동님의 노션</div>
+      <div class="nickname">(닉네임)님의 노션</div>
       <img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png" alt="Notion 아이콘" class="notion-icon">
       
       <div>
@@ -141,40 +141,18 @@
       게시글 작성
     </h1>
 
-    <input type="text" id="title" placeholder="제목을 입력하세요">
-    <textarea id="content" placeholder="내용을 입력하세요"></textarea>
-    <button class="submit-btn" onclick="submitPost()">확인</button>
+    {% if error %}
+      <p style="color: red;">{{ error }}</p>
+    {% endif %}
+
+    <form method="POST" action="/in_notice/">
+      {% csrf_token %}
+      <input type="text" name="title" placeholder="제목을 입력하세요" required>
+      <textarea name="content" placeholder="내용을 입력하세요" required></textarea>
+      <button type="submit" class="submit-btn">확인</button>
+    </form>
   </div>
 </div>
-
-<!-- JavaScript -->
-<script>
-  function submitPost() {
-    const title = document.getElementById("title").value.trim();
-    const content = document.getElementById("content").value.trim();
-
-    if (!title) {
-      alert("제목을 입력해주세요.");
-      return;
-    }
-
-    if (!content) {
-      alert("내용을 입력해주세요.");
-      return;
-    }
-
-    // 실제 서버 전송은 여기에서 처리 가능
-    console.log("작성된 게시글:");
-    console.log("제목:", title);
-    console.log("내용:", content);
-
-    alert("게시글이 작성되었습니다!");
-    
-    // 초기화 (선택사항)
-    document.getElementById("title").value = "";
-    document.getElementById("content").value = "";
-  }
-</script>
 
 </body>
 </html>
