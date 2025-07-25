@@ -21,6 +21,10 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
+    }
+    
+    /* 전체 레이아웃 */
+    .container {
       display: flex;
       height: 100vh;
     }
@@ -34,26 +38,42 @@
       flex-direction: column;
       justify-content: space-between;
     }
+
+    .sidebar-top {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
     .nickname {
       font-weight: bold;
       font-size: 18px;
       margin-bottom: 10px;
     }
+
+    .post-list {
+      margin-left: 10px;
+      color: gray;
+    }
+    
     .post-list p {
       margin: 5px 0;
       color: gray;
     }
+
     .new-post {
       font-weight: bold;
       margin-top: 10px;
       cursor: pointer;
     }
+
     .logout {
       padding: 0;
       text-align: center;
       background: none;
       border: none;
     }
+
     .logout-btn {
       width: 200px;
       height: 200px;
@@ -65,9 +85,11 @@
       outline: none;
       display: inline-block;
     }
+
     .logout-btn:hover {
       background: url('/static/로그아웃_어보브.png') no-repeat center/cover;
     }
+
     img.notion-icon {
       width: 40px;
       margin-bottom: 15px;
@@ -153,19 +175,25 @@
 </head>
 <body>
 
+<div class="container">
+  <!-- 사이드바 -->
   <div class="sidebar">
-    <div>
-      <div class="nickname">{{ nickname }}의 노션</div>
-      <div style="font-weight: bold;">+ 게시글</div>
-      <div class="post-list">
-        {% for post in posts %}
-          <p><a href="{% url 'aiga:vi_notice' post.title %}">+ {{ post.title }}</a></p>
-        {% empty %}
-          <p>게시글이 없습니다.</p>
-        {% endfor %}
+    <div class="sidebar-top">
+      <div class="nickname">{{ nickname }}의 노션아이가</div>
+      <div>
+        <div style="font-weight: bold;">+ 게시글</div>
+        <div class="post-list">
+          {% for post in posts %}
+            <p><a href="{% url 'aiga:vi_notice' post.title %}">+ {{ post.title }}</a></p>
+          {% empty %}
+            <p>게시글이 없습니다.</p>
+          {% endfor %}
+        </div>
       </div>
+
       <div class="new-post" onclick="location.href='/in_notice/'">+ 글 작성하기</div>
     </div>
+    
     <!-- 로그아웃 버튼 -->
       <form method="post" action="/logout/">
         {% csrf_token %}
@@ -195,5 +223,6 @@
         <button type="submit" class="btn-edit">수정</button>
       </form>
     </div>
+</div>
 </body>
 </html>
