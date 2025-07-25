@@ -1,8 +1,16 @@
 # Acorn_From0714 레포지토리
 
-## 가상환경
+## 가상환경 셋업
+# 가상 환경 생성
+python -m venv venv
+.\venv\Scripts\activate
+# 라이브러리 설치 패키지
 pip install -r requirements.txt
-경로: cd C:\Users\SeYun\Acorn_From0714\mini_project\project_file
+# manage.py 파일이있는 경로로 이동
+cd C:\Users\SeYun\Acorn_From0714\mini_project\project_file
+python manage.py makemigrations
+python manage.py migrate
+python manage.py runserver
 
 ## 적용돼있는 기능
 <DB>
