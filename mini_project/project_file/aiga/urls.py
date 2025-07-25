@@ -11,4 +11,6 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('m_notice/', views.m_notice, name='m_notice'),
     path('in_notice/', views.in_notice, name='in_notice'),
+    path('vi_notice/<str:title>/', views.vi_notice, name='vi_notice'),
+    path('logout/', views.logout, name='logout'),
 ]

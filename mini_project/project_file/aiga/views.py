@@ -38,6 +38,12 @@ def login(request):
     return render(request, 'login.html')
 
 
+# 로그아웃
+def logout(request):
+    request.session.flush()  # 모든 세션 데이터 삭제
+    return redirect('aiga:login')
+
+
 # 회원가입
 def register(request):
     if request.method == 'POST':
@@ -72,9 +78,12 @@ def m_notice(request):
 
         nickname, user_pid = user_data
 
-        # 해당 유저의 게시글 가져오기
-        cursor.execute("SELECT title FROM notes WHERE user_pid = %s ORDER BY last_modified DESC", [user_pid])
-        posts = cursor.fetchall()  # 리스트 형태로 게시글 제목들만
+        # 게시글 목록 가져오기
+        cursor.execute("SELECT title FROM notes ORDER BY last_modified")
+        posts = list()
+        rows = cursor.fetchall()  # 리스트 형태로 게시글 제목들만
+        for row in rows:
+            posts.append({'title': row[0]}) # 딕셔너리 형태로 저장
 
     return render(request, 'm_notice.html', {
         'nickname': nickname,
@@ -117,10 +126,56 @@ def in_notice(request):
         user_data = cursor.fetchone()
         nickname = user_data[0]
 
+        # 게시글 목록 가져오기
+        cursor.execute("SELECT title FROM notes ORDER BY last_modified")
+        posts = list()
+        rows = cursor.fetchall()  # 리스트 형태로 게시글 제목들만
+        for row in rows:
+            posts.append({'title': row[0]}) # 딕셔너리 형태로 저장
+
     # GET 요청 시: 작성 폼 보여주기
     return render(request, 'in_notice.html', {
         'nickname': nickname,
+        'posts': posts,
     })
+
+
+# 게시글 보기
+def vi_notice(request, title):
+    username = request.session['user']
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT nickname FROM users WHERE username=%s", [username])
+        user_data = cursor.fetchone()
+        nickname = user_data[0]
+        
+    user_post = None
+    error_message = None
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT n.title, n.content, u.nickname FROM notes n JOIN users u ON n.user_pid = u.pid WHERE n.title=%s", [title]) # notes 테이블과 users 테이블을 조인하여 title, content, nickname 컬럼 조회
+            result = cursor.fetchone()
+            if result:
+                user_post = {'title': result[0], 'content': result[1], 'author': result[2]} # result[2]는 이제 nickname
+            else:
+                error_message = "게시글을 찾을 수 없습니다."
+
+            # 게시글 목록 가져오기
+            cursor.execute("SELECT title FROM notes ORDER BY last_modified")
+            posts = list()
+            rows = cursor.fetchall()  # 리스트 형태로 게시글 제목들만
+            for row in rows:
+                posts.append({'title': row[0]}) # 딕셔너리 형태로 저장
+
+    except Exception as e:
+        error_message = "게시글을 불러오는 중 오류가 발생했습니다."
+
+    return render(request, 'vi_notice.html', {
+        'nickname': nickname, 
+        'user_post': user_post, 
+        'error_message': error_message, 
+        'posts': posts,
+        })
 
 
 # DB 연결 처리 예시 ----------------------------------------------------------------

@@ -67,12 +67,26 @@
     }
 
     .logout {
-      padding: 8px;
+      padding: 0;
       text-align: center;
-      background-color: white;
-      border: 1px solid #888;
-      cursor: pointer;
+      background: none;
+      border: none;
     }
+    .logout-btn {
+      width: 200px;
+      height: 200px;
+      background: url('/static/로그아웃_일반.png') no-repeat center/cover;
+      border: none;
+      border-radius: 0%;
+      cursor: pointer;
+      transition: background 0.2s;
+      outline: none;
+      display: inline-block;
+    }
+    .logout-btn:hover {
+      background: url('/static/로그아웃_어보브.png') no-repeat center/cover;
+    }
+    
 
     /* 오른쪽 메인 영역 */
     .main-content {
@@ -88,18 +102,27 @@
   <div class="sidebar">
     <div class="sidebar-top">
       <div class="nickname">{{ nickname }}님의 노션</div>
-      <div class="post-list"> 
-        {% for post in posts %}
-          <p>+ {{ post.0 }}</p>
-        {% empty %}
-          <p>게시글이 없습니다.</p>
-        {% endfor %}
+      <div>
+        <div>+ 게시글</div>
+        <div class="post-list"> 
+          {% for post in posts %}
+            <p><a href="{% url 'aiga:vi_notice' post.title %}">+ {{ post.title }}</a></p>
+          {% empty %}
+            <p>게시글이 없습니다.</p>
+          {% endfor %}
+        </div>
       </div>
-
+    
       <div class="new-post" onclick="location.href='/in_notice/'">+ 글 작성하기</div>
     </div>
-
-    <div class="logout">로그아웃</div>
+    
+    <!-- 로그아웃 버튼 -->
+      <form method="post" action="/logout/">
+        {% csrf_token %}
+        <div class="logout">
+          <button type="submit" class="logout-btn"></button>
+        </div>
+    </form>
   </div>
 
   <!-- 메인 콘텐츠 영역 -->
