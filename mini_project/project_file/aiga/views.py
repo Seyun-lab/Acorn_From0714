@@ -139,6 +139,9 @@ def in_notice(request):
         'posts': posts,
     })
 
+def logout(request):
+    request.session.flush()  # 모든 세션 데이터 삭제
+    return redirect('aiga:login')
 
 # 게시글 보기
 def vi_notice(request, title):

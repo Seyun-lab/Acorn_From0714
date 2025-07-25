@@ -38,11 +38,24 @@
       cursor: pointer;
     }
     .logout {
-      padding: 8px;
-      background-color: white;
-      border: 1px solid #888;
+      padding: 0;
       text-align: center;
+      background: none;
+      border: none;
+    }
+    .logout-btn {
+      width: 200px;
+      height: 200px;
+      background: url('/static/로그아웃_일반.png') no-repeat center/cover;
+      border: none;
+      border-radius: 0%;
       cursor: pointer;
+      transition: background 0.2s;
+      outline: none;
+      display: inline-block;
+    }
+    .logout-btn:hover {
+      background: url('/static/로그아웃_어보브.png') no-repeat center/cover;
     }
     img.notion-icon {
       width: 40px;
@@ -132,7 +145,13 @@
       </div>
       <div class="new-post" onclick="location.href='/in_notice/'">+ 글 작성하기</div>
     </div>
-    <div class="logout">로그아웃</div>
+    <!-- 로그아웃 버튼 -->
+      <form method="post" action="/logout/">
+        {% csrf_token %}
+        <div class="logout">
+          <button type="submit" class="logout-btn"></button>
+        </div>
+    </form>
   </div>
 
   <div class="main-content">
