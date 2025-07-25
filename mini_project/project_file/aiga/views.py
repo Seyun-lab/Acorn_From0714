@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.db import connection
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_protect
 from django.conf import settings  # settings.py에서 DB 정보 불러오기
 import MySQLdb  # mysqlclient 사용
 import json
@@ -156,10 +157,11 @@ def vi_notice(request, title):
 
     try:
         with connection.cursor() as cursor:
-            cursor.execute("SELECT n.title, n.content, u.nickname FROM notes n JOIN users u ON n.user_pid = u.pid WHERE n.title=%s", [title]) # notes 테이블과 users 테이블을 조인하여 title, content, nickname 컬럼 조회
+            cursor.execute("SELECT n.title, n.content, u.nickname, n.note_id FROM notes n JOIN users u ON n.user_pid = u.pid WHERE n.title=%s", [title]) # notes 테이블과 users 테이블을 조인하여 title, content, nickname 컬럼 조회
             result = cursor.fetchone()
             if result:
                 user_post = {'title': result[0], 'content': result[1], 'author': result[2]} # result[2]는 이제 nickname
+                note_id = result[3]  # ← note_id를 여기서 꺼내세요!
             else:
                 error_message = "게시글을 찾을 수 없습니다."
 
@@ -178,51 +180,140 @@ def vi_notice(request, title):
         'user_post': user_post, 
         'error_message': error_message, 
         'posts': posts,
+        'note_id': note_id,
         })
 
-
-# DB 연결 처리 예시 ----------------------------------------------------------------
-# DB 연결 함수 (mysqlclient)
-def get_connection():
-    db = settings.DATABASES['default']
-    return MySQLdb.connect(
-        user=db['USER'],
-        passwd=db['PASSWORD'],
-        host=db['HOST'],
-        port=int(db['PORT']),
-        db=db['NAME'],
-        charset='utf8'
-    )
-
-
-@csrf_exempt
-def save_data(request):
+# 게시글 삭제
+@csrf_protect
+def delete_notice(request):
     if request.method == 'POST':
-        data = json.loads(request.body)
-        name = int(data.get('name'))
-        number = int(data.get('number'))
+        note_id = request.POST.get('note_id')
+        if not note_id:
+            return render(request, 'vi_notice.html', {'error': 'note_id가 필요합니다.'})
+        # 현재 로그인한 유저 확인
+        username = request.session.get('user')
+        print("Current user:", username) # 확인
+        if not username:
+            return render(request, 'vi_notice.html', {'error': '로그인이 필요합니다.'})
         try:
-            conn = get_connection()
-            cur = conn.cursor()
-            # mysqlclient는 %s를 사용
-            cur.execute("INSERT INTO psy (name, number) VALUES (%s, %s)", (name, number))
-            conn.commit()
-            cur.close()
-            conn.close()
-            return JsonResponse({'status': 'ok'})
+            with connection.cursor() as cursor:
+                # 유저의 pid 가져오기
+                cursor.execute("SELECT pid FROM users WHERE username=%s", [username])
+                user_row = cursor.fetchone()
+                print("User row:", user_row)  # 확인
+                if not user_row:
+                    return render(request, 'vi_notice.html', {'error': '사용자 정보를 찾을 수 없습니다.'})
+                user_pid = user_row[0]
+                # 게시글의 user_pid 확인
+                cursor.execute("SELECT user_pid FROM notes WHERE note_id=%s", [note_id])
+                note_row = cursor.fetchone()
+                print("note row:", note_row)  # 확인
+                if not note_row:
+                    return render(request, 'vi_notice.html', {'error': '게시글을 찾을 수 없습니다.'})
+                note_pid = note_row[0]
+                if user_pid != note_pid:
+                    print("삭제 권한이 없습니다.")
+                    # 게시글 정보와 목록 다시 조회
+                    cursor.execute("SELECT n.title, n.content, u.nickname, n.note_id FROM notes n JOIN users u ON n.user_pid = u.pid WHERE n.note_id=%s", [note_id])
+                    result = cursor.fetchone()
+                    if result:
+                        user_post = {'title': result[0], 'content': result[1], 'author': result[2]}
+                        note_id_val = result[3]
+                    else:
+                        user_post = None
+                        note_id_val = None
+                    # 현재 로그인한 사용자의 nickname 조회
+                    cursor.execute("SELECT nickname FROM users WHERE username=%s", [username])
+                    user_nick_row = cursor.fetchone()
+                    nickname_val = user_nick_row[0] if user_nick_row else None
+                    cursor.execute("SELECT title FROM notes ORDER BY last_modified")
+                    posts = [{'title': row[0]} for row in cursor.fetchall()]
+                    return render(request, 'vi_notice.html', {
+                        'nickname': nickname_val,
+                        'user_post': user_post,
+                        'error_message': '삭제 권한이 없습니다.',
+                        'posts': posts,
+                        'note_id': note_id_val,
+                    })
+                # 삭제
+                cursor.execute("DELETE FROM notes WHERE note_id=%s", [note_id])
+                connection.commit()
+            return redirect('aiga:m_notice')
         except Exception as e:
-            return JsonResponse({'status': 'error', 'message': str(e)})
+            return render(request, 'vi_notice.html', {'error': str(e)})
+    return render(request, 'vi_notice.html', {'error': 'POST 요청만 허용됩니다.'})
 
-
-def get_data(request):
-    try:
-        conn = get_connection()
-        cur = conn.cursor()
-        cur.execute("SELECT * FROM psy")
-        rows = cur.fetchall()
-        cur.close()
-        conn.close()
-        data = [{'name': r[0], 'number': r[1]} for r in rows]
-        return JsonResponse({'data': data})
-    except Exception as e:
-        return JsonResponse({'status': 'error', 'message': str(e)})
+# 게시글 수정 폼 및 처리
+@csrf_protect
+def up_notice(request):
+    # 현재 로그인한 유저 확인
+    username = request.session.get('user')
+    if not username:
+        return render(request, 'vi_notice.html', {'error': '로그인이 필요합니다.'})
+    if request.method == 'GET':
+        note_id = request.GET.get('note_id')
+        if not note_id:
+            return render(request, 'vi_notice.html', {'error': 'note_id가 필요합니다.'})
+        with connection.cursor() as cursor:
+            # 유저의 pid 가져오기
+            cursor.execute("SELECT pid FROM users WHERE username=%s", [username])
+            user_row = cursor.fetchone()
+            if not user_row:
+                return render(request, 'vi_notice.html', {'error': '사용자 정보를 찾을 수 없습니다.'})
+            user_pid = user_row[0]
+            # 게시글 정보 및 user_pid 확인
+            cursor.execute("SELECT title, content, user_pid FROM notes WHERE note_id=%s", [note_id])
+            note = cursor.fetchone()
+        if not note:
+            return render(request, 'vi_notice.html', {'error': '게시글을 찾을 수 없습니다.'})
+        print(user_pid, note[2])
+        if user_pid != note[2]:
+            # 게시글 목록 다시 조회
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT title FROM notes ORDER BY last_modified")
+                posts = [{'title': row[0]} for row in cursor.fetchall()]
+                cursor.execute("SELECT nickname FROM users WHERE username=%s", [username])
+                user_nick_row = cursor.fetchone()
+                nickname_val = user_nick_row[0] if user_nick_row else None
+            user_post = {'title': note[0], 'content': note[1], 'author': nickname_val}
+            return render(request, 'vi_notice.html', {
+                'nickname': nickname_val,
+                'user_post': user_post,
+                'error_message': '수정 권한이 없습니다.',
+                'posts': posts,
+                'note_id': note_id,
+            })
+        return render(request, 'up_notice.html', {
+            'note_id': note_id,
+            'title': note[0],
+            'content': note[1],
+        })
+    elif request.method == 'POST':
+        note_id = request.POST.get('note_id')
+        title = request.POST.get('title')
+        content = request.POST.get('content')
+        if not (note_id and title):
+            return render(request, 'up_notice.html', {'error': '제목을 입력하세요.', 'note_id': note_id, 'title': title, 'content': content})
+        try:
+            with connection.cursor() as cursor:
+                # 유저의 pid 가져오기
+                cursor.execute("SELECT pid FROM users WHERE username=%s", [username])
+                user_row = cursor.fetchone()
+                if not user_row:
+                    return render(request, 'up_notice.html', {'error': '사용자 정보를 찾을 수 없습니다.', 'note_id': note_id, 'title': title, 'content': content})
+                user_pid = user_row[0]
+                # 게시글의 user_pid 확인
+                cursor.execute("SELECT user_pid FROM notes WHERE note_id=%s", [note_id])
+                note_row = cursor.fetchone()
+                if not note_row:
+                    return render(request, 'up_notice.html', {'error': '게시글을 찾을 수 없습니다.', 'note_id': note_id, 'title': title, 'content': content})
+                note_pid = note_row[0]
+                if user_pid != note_pid:
+                    return render(request, 'up_notice.html', {'error': '수정 권한이 없습니다.', 'note_id': note_id, 'title': title, 'content': content})
+                # 수정
+                cursor.execute("UPDATE notes SET title=%s, content=%s, last_modified=NOW() WHERE note_id=%s", [title, content, note_id])
+                connection.commit()
+            return redirect('aiga:m_notice')
+        except Exception as e:
+            return render(request, 'up_notice.html', {'error': str(e), 'note_id': note_id, 'title': title, 'content': content})
+    return render(request, 'vi_notice.html', {'error': '잘못된 요청입니다.'})
