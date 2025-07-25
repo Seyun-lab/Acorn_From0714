@@ -7,6 +7,9 @@
 **프로젝트 설계부터 최종 리뷰까지, 6명의 팀원이 정성을 담아 완성한 결과물입니다.**
 
 ---
+## 문서 링크
+https://www.notion.so/Notion-AIGA-234a3fb7419680d085eceab1eb19d7f5?source=copy_link
+---
 
 ## 목차
 - [소개](#소개)
