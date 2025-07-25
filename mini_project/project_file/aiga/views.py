@@ -3,11 +3,10 @@ from django.db import connection
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings  # settings.py에서 DB 정보 불러오기
-from django.utils import timezone
 import MySQLdb  # mysqlclient 사용
 import json
 import uuid
-from datetime import datetime
+import datetime
 
 
 # 시작 페이지
@@ -57,7 +56,59 @@ def register(request):
 
 # 게시글 페이지
 def m_notice(request):
-    return render(request, 'm_notice.html')
+    if 'user' not in request.session:
+        return redirect('aiga:login')  # 비로그인 사용자는 로그인 페이지로 리디렉션
+
+    username = request.session['user']
+    with connection.cursor() as cursor:
+        # 닉네임 가져오기
+        cursor.execute("SELECT nickname, pid FROM users WHERE username = %s", [username])
+        user = cursor.fetchone()
+        if not user:
+            return redirect('aiga:login')
+
+        nickname, user_pid = user
+
+        # 해당 유저의 게시글 가져오기
+        cursor.execute("SELECT title FROM notes WHERE user_pid = %s ORDER BY last_modified DESC", [user_pid])
+        posts = cursor.fetchall()  # 리스트 형태로 게시글 제목들만
+
+    return render(request, 'm_notice.html', {
+        'nickname': nickname,
+        'posts': posts,
+    })
+
+# 게시글 작성
+@csrf_exempt
+def in_notice(request):
+    if request.method == 'POST':
+        if not request.session.get('user'):
+            return render(request, 'login.html', {'error': '로그인이 필요합니다.'})
+
+        title = request.POST.get('title')
+        content = request.POST.get('content')
+        user_name = request.session['user']
+
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT pid FROM users WHERE username=%s", [user_name])
+            user_data = cursor.fetchone()
+            if not user_data:
+                return render(request, 'in_notice.html', {'error': '사용자 정보를 찾을 수 없습니다.'})
+
+            user_pid = user_data[0]
+            note_id = str(uuid.uuid4())
+            now = datetime.datetime.now()
+
+            cursor.execute(
+                "INSERT INTO notes (note_id, title, content, last_modified, user_pid) VALUES (%s, %s, %s, %s, %s)",
+                [note_id, title, content, now, user_pid]
+            )
+            connection.commit()
+
+        return redirect('aiga:m_notice')  # 게시글 목록 페이지로 리다이렉트
+
+    # GET 요청 시: 작성 폼 보여주기
+    return render(request, 'in_notice.html')
 
 
 
