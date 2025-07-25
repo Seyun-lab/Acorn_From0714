@@ -14,9 +14,6 @@ SECRET_KEY = 'django-insecure-@u0iqtt4w#w4x6j5#sz+g(b$!^x6mepy*k7v=1^a@bqh3xh2oj
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -59,23 +56,26 @@ TEMPLATES = [
 WSGI_APPLICATION = 'project_file.wsgi.application'
 
 
-# Database
+# -------------DB 연결--------------------
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# python manage.py runserver
+
+#ALLOWED_HOSTS = ['192.168.0.16'] 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'mydb',      # MariaDB에 생성한 DB명
         'USER': 'root',      # MariaDB 사용자명
         'PASSWORD': '1234',  # MariaDB 비밀번호
-        'HOST': 'localhost',
+        #'HOST': '192.168.0.16', # 호스트 pc 주소, 내부 네트워킹
+        'HOST': 'localhost', # 127.0.0.1
         'PORT': '3306',
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
         },
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
