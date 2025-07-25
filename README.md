@@ -20,23 +20,23 @@
 
 **시작 페이지**
 
-![1.PNG](attachment:e512e789-89a5-40c1-8233-02a491e464a0:1.png)
+![1.PNG](UI/1.png)
 
 **로그인 페이지**
 
-![2.PNG](attachment:9c2544d9-d2c3-4ca4-80c6-def7df319d99:2.png)
+![2.PNG](UI/2.png)
 
 **회원가입 페이지**
 
-![3.PNG](attachment:670e1ef4-75d5-4d39-87cb-e5f7def5025d:3.png)
+![3.PNG](UI/3.png)
 
 **게시글 내용**
 
-![image.png](attachment:3f062028-0a0d-4e3e-abc0-d27dd2d72fd8:image.png)
+![4.png](UI/4.png)
 
 **로그아웃 버튼 변화**
 
-![bandicam 2025-07-25 17-13-07-631.jpg](attachment:38d1509f-56a8-45fa-bf12-1163d04a9251:bandicam_2025-07-25_17-13-07-631.jpg)
+![5.jpg](UI/5.jpg)
 
 ## 목차
 
