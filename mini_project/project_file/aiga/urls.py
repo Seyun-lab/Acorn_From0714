@@ -12,5 +12,7 @@ urlpatterns = [
     path('m_notice/', views.m_notice, name='m_notice'),
     path('in_notice/', views.in_notice, name='in_notice'),
     path('vi_notice/<str:title>/', views.vi_notice, name='vi_notice'),
+    path('up_notice/', views.up_notice, name='up_notice'),
+    path('delete_notice/', views.delete_notice, name='delete_notice'),
     path('logout/', views.logout, name='logout'),
 ]

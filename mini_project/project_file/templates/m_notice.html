@@ -86,6 +86,16 @@
     .logout-btn:hover {
       background: url('/static/로그아웃_어보브.png') no-repeat center/cover;
     }
+
+    /* 게시글 목록 링크 색상 제거 */
+    .post-list a,
+    .post-list a:visited {
+      color: #888 !important;  /* 원하는 색상으로 변경 */
+      text-decoration: none;
+    }
+    .post-list a:hover {
+      text-decoration: underline;
+    }
     
 
     /* 오른쪽 메인 영역 */
@@ -130,7 +140,7 @@
     <!-- 게시글 내용이 여기에 표시될 예정 -->
     <img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png" alt="Notion 아이콘" class="notion-icon">
     <div class="icon-underline"></div>
-    <div>내용내용</div>
+    <div></div>
 
   </div>
 </div>
