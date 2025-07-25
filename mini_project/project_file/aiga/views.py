@@ -1,11 +1,7 @@
 from django.shortcuts import render, redirect
 from django.db import connection
-from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.csrf import csrf_protect
-from django.conf import settings  # settings.py에서 DB 정보 불러오기
-import MySQLdb  # mysqlclient 사용
-import json
 import uuid
 import datetime
 

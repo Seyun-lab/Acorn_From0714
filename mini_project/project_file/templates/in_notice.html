@@ -13,6 +13,7 @@
       font-family: 'Arial', sans-serif;
     }
 
+    /* 전체 레이아웃 */
     .container {
       display: flex;
       height: 100vh;
@@ -37,6 +38,7 @@
     .nickname {
       font-weight: bold;
       font-size: 18px;
+      margin-bottom: 10px;
     }
 
     .notion-icon {
@@ -52,6 +54,16 @@
       margin: 5px 0;
     }
 
+    /* 게시글 목록 링크 색상 제거 */
+    .post-list a,
+    .post-list a:visited {
+      color: #888 !important;  /* 원하는 색상으로 변경 */
+      text-decoration: none;
+    }
+    .post-list a:hover {
+      text-decoration: underline;
+    }
+
     .new-post {
       margin-top: 10px;
       font-weight: bold;
@@ -64,6 +76,7 @@
       background: none;
       border: none;
     }
+
     .logout-btn {
       width: 200px;
       height: 200px;
@@ -75,6 +88,7 @@
       outline: none;
       display: inline-block;
     }
+
     .logout-btn:hover {
       background: url('/static/로그아웃_어보브.png') no-repeat center/cover;
     }
@@ -129,9 +143,9 @@
   <!-- 사이드바 -->
   <div class="sidebar">
     <div class="sidebar-top">
-      <div class="nickname">{{ nickname }}님의 노션</div>
+      <div class="nickname">{{ nickname }}의 노션아이가</div>
       <div>
-        <div>+ 게시글</div>
+        <div style="font-weight: bold;">+ 게시글</div>
         <div class="post-list">
           {% for post in posts %}
             <p><a href="{% url 'aiga:vi_notice' post.title %}">+ {{ post.title }}</a></p>

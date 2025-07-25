@@ -9,7 +9,7 @@
     }
     body {
       margin: 0;
-      font-family: 'Malgun Gothic', '맑은 고딕';
+      font-family: Arial, sans-serif;
     }
 
     /* 전체 레이아웃 */
@@ -17,6 +17,7 @@
       display: flex;
       height: 100vh;
     }
+
     /* 밑줄 스타일 */
     .icon-underline {
     height: 2px;
@@ -24,6 +25,7 @@
     margin: 8px auto 20px auto;
     border-radius: 1px;    /* 굴곡 효과, 선택사항 */
     }
+
     /* 왼쪽 사이드바 */
     .sidebar {
       width: 250px;
@@ -43,12 +45,7 @@
     .nickname {
       font-weight: bold;
       font-size: 18px;
-    }
-
-    .notion-icon {
-      width: 70px;
-      margin-top: 10px;
-      margin-left: 10px;
+      margin-bottom: 10px;
     }
 
     .post-list {
@@ -56,13 +53,9 @@
       color: gray;
     }
 
-    .post-list p {
-      margin: 5px 0;
-    }
-
     .new-post {
-      margin-top: 10px;
       font-weight: bold;
+      margin-top: 10px;
       cursor: pointer;
     }
 
@@ -72,6 +65,17 @@
       background: none;
       border: none;
     }
+
+    .notion-icon {
+      width: 70px;
+      margin-top: 10px;
+      margin-left: 10px;
+    }
+
+    .post-list p {
+      margin: 5px 0;
+    }
+
     .logout-btn {
       width: 200px;
       height: 200px;
@@ -97,8 +101,7 @@
       text-decoration: underline;
     }
     
-
-    /* 오른쪽 메인 영역 */
+    /* 본문 영역 */
     .main-content {
       flex: 1;
       background-color: #fff;
@@ -111,7 +114,7 @@
   <!-- 사이드바 -->
   <div class="sidebar">
     <div class="sidebar-top">
-      <div class="nickname">{{ nickname }}님의 노션</div>
+      <div class="nickname">{{ nickname }}의 노션아이가</div>
       <div>
         <div style="font-weight: bold;">+ 게시글</div>
         <div class="post-list"> 
