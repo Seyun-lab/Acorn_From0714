@@ -1,0 +1,92 @@
+{% if error %}
+<script>
+  alert('{{ error }}');
+</script>
+{% endif %}
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입</title>
+    <style>
+        .register-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 90vh;
+        }
+        .register-box {
+            text-align: center;
+        }
+        .logo {
+            width: 80px;
+            margin-bottom: 20px;
+        }
+        .input-field {
+            display: block;
+            width: 300px;
+            margin: 10px auto;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+        }
+        .submit-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: none;
+            border: 1px solid black;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .error-message {
+            color: red;
+            margin-top: 10px;
+        }
+        .success-message {
+            color: green;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="register-box">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png" alt="Logo" class="logo">
+            <form id="registerForm" method="post" action="{% url 'aiga:register' %}">
+                {% csrf_token %}
+                <input type="text" id="username" name="username" placeholder="아이디" class="input-field">
+                <input type="text" id="nickname" name="nickname" placeholder="닉네임" class="input-field">
+                <input type="password" id="password1" name="password1" placeholder="비밀번호" class="input-field">
+                <input type="password" id="password2" name="password2" placeholder="비밀번호 확인" class="input-field">
+                <button type="submit" class="submit-button">회원가입</button>
+                <div id="message"></div>
+            </form>
+        </div>
+    </div>
+<script>
+document.getElementById('registerForm').addEventListener('submit', function(e) {
+    // 입력값 가져오기
+    const username = document.getElementById('username').value.trim();
+    const nickname = document.getElementById('nickname').value.trim();
+    const password1 = document.getElementById('password1').value;
+    const password2 = document.getElementById('password2').value;
+    const message = document.getElementById('message');
+
+    // 검증 로직
+    if (!username || !nickname || !password1 || !password2) {
+        e.preventDefault();
+        alert('모든 항목을 입력해 주세요.');
+        return;
+    }
+
+    if (password1 !== password2) {
+        e.preventDefault();
+        alert('비밀번호가 일치하지 않습니다.');
+        return;
+    }
+    // 통과 시 서버로 submit
+});
+</script>
+</body>
+</html>
