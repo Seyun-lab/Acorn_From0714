@@ -9,7 +9,8 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('login/', views.login, name='login'),
     path('register/', views.register, name='register'),
-    path('m_notice/', views.m_notice, name='m_notice'),
-    path('in_notice/', views.in_notice, name='in_notice'),
+    path('m_notice/', views.m_notice, name='m_notice'), # 게시글 메인 페이지
+    path('in_notice/', views.in_notice, name='in_notice'), # 게시글 작성
+    path('vi_notice/<str:title>/', views.vi_notice, name='vi_notice'), # 해당 게시글 내용
     path('logout/', views.logout, name='logout'),
 ]
