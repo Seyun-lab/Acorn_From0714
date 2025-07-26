@@ -148,5 +148,3 @@ Notion AIGA는 노션의 UI를 참고했지만, 노트 기능이 아닌 게시�
 **역할:** Javascript&Django&Python(pygame)&MariaDB 연동 교육 문서 제작, 사용자 기반 UI 피드백
 
 **제작 문서:** [팀] GitHub 협업 워크플로우 맵_초딩, [팀] GitHub 형상관리 (GitHub 사용 계획), [팀] GitHub 협업 절차 종합 가이드 (Git Bash + VS Code), Git 명령어 모음집, Django or 기타_자세히, Django or 기타_요약, Node.js + Express.js
-
-![bandicam 2025-07-25 17-13-07-631.jpg](attachment:81f98897-cc3a-435b-81dc-ca5d6d61704c:bandicam_2025-07-25_17-13-07-631.jpg)
