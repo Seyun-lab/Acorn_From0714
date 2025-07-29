@@ -106,7 +106,6 @@ Notion_AIGA/
 ## 설치 방법
 
 
-```
 ### 가상환경 설치
 1. 터미널 위치 이동: cd .\mini_project\
 2. 가상환경 생성: python -m venv myproject
@@ -123,7 +122,6 @@ Notion_AIGA/
 2. python manage.py makemigrations aiga
 3. python manage.py migrate
 4. python manage.py runserver
-```
 
 ## 작업 기간
 
