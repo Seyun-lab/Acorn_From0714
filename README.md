@@ -8,10 +8,6 @@
 
 ---
 
-## 문서 링크
-
-## [https://www.notion.so/Notion-AIGA-234a3fb7419680d085eceab1eb19d7f5?source=copy_link](https://www.notion.so/Notion-AIGA-234a3fb7419680d085eceab1eb19d7f5?pvs=21)
-
 ## 시연 영상
 
 ## https://youtu.be/XSiDpRtzHwk?si=rTzKiUkNzh30UuRt
