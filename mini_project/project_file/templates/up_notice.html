@@ -129,19 +129,19 @@
   <!-- 사이드바 -->
   <div class="sidebar">
     <div class="sidebar-top">
-      <div class="nickname">{{ nickname }}님의 노션</div>
-      <img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png" alt="Notion 아이콘" class="notion-icon">
-      
+      <div class="nickname">{{ nickname }}의 노션아이가</div>
       <div>
-        <div>+ 게시글</div>
+        <div style="font-weight: bold;">+ 게시글</div>
         <div class="post-list">
-          <p>+ (게시글 제목)</p>
-          <p>+ (게시글 제목)</p>
-          <p>+ (게시글 제목)</p>
+          {% for post in posts %}
+            <p><a href="{% url 'aiga:vi_notice' post.title %}">+ {{ post.title }}</a></p>
+          {% empty %}
+            <p>게시글이 없습니다.</p>
+          {% endfor %}
         </div>
       </div>
 
-      <div class="new-post">+ 글 작성하기</div>
+      <div class="new-post" onclick="location.href='/in_notice/'">+ 글 작성하기</div>
     </div>
 
     <!-- 로그아웃 버튼 -->

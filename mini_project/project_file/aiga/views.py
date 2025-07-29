@@ -279,10 +279,19 @@ def up_notice(request):
                 'posts': posts,
                 'note_id': note_id,
             })
+        # 사이드바용 nickname, posts도 함께 전달
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT nickname FROM users WHERE username=%s", [username])
+            user_nick_row = cursor.fetchone()
+            nickname_val = user_nick_row[0] if user_nick_row else None
+            cursor.execute("SELECT title FROM notes ORDER BY last_modified")
+            posts = [{'title': row[0]} for row in cursor.fetchall()]
         return render(request, 'up_notice.html', {
             'note_id': note_id,
             'title': note[0],
             'content': note[1],
+            'nickname': nickname_val,
+            'posts': posts,
         })
     elif request.method == 'POST':
         note_id = request.POST.get('note_id')
