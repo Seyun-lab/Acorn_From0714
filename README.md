@@ -61,6 +61,38 @@ Notion AIGA는 노션의 UI를 참고했지만, 노트 기능이 아닌 게시�
 - 회원가입
 - 게시판 CRUD (Create, Read, Update, Delete)
 
+
+## 디렉토리 구조
+
+```
+Notion_AIGA/
+├── README.md
+├── mini_project/
+│   ├── requirements.txt
+│   ├── database/
+│   │   └── mydb.sql
+│   └── project_file/
+│       ├── manage.py
+│       ├── aiga/
+│       │   ├── models.py
+│       │   ├── views.py
+│       │   ├── urls.py
+│       │   └── ...
+│       ├── project_file/
+│       │   ├── settings.py
+│       │   ├── urls.py
+│       │   └── ...
+│       ├── static/
+│       └── templates/
+│           ├── index.html
+│           ├── login.html
+│           └── ...
+└── UI/
+    ├── 1.PNG
+    ├── 2.PNG
+    └── ...
+```
+
 ## 사용한 기술 스택
 
 - Python: 백엔드 및 웹 프레임워크 개발에 사용 (비즈니스 로직 및 서버 구현)
@@ -73,11 +105,24 @@ Notion AIGA는 노션의 UI를 참고했지만, 노트 기능이 아닌 게시�
 
 ## 설치 방법
 
-```
-1. python -m venv myproject
-2. pip install -r requirements.txt
-3. 경로: cd C:\\Users\\SeYun\\Acorn_From0714\\mini_project\\project_file
 
+```
+### 가상환경 설치
+1. 터미널 위치 이동: cd .\mini_project\
+2. 가상환경 생성: python -m venv myproject
+3. (Windows PowerShell 기준) 가상환경 활성화: .\myproject\Scripts\Activate.ps1
+4. 가상환경이 활성화된 상태에서 패키지 설치: pip install -r requirements.txt
+
+### DB 설치 및 테이블 업로드, DB & 장고 연결
+1. MariaDB 설치 및 DB 사용자 생성 (username: root, password: 1234 권장)
+2. mini_project/database/mydb.sql 파일을 생성한 DB에 업로드(입력)
+3. mini_project/project_file/project_file/settings.py의 DATABASES 설정을 본인 DB 환경에 맞게 수정
+
+### 장고 데이터 마이그레이션 및 서버 실행
+1. 터미널 위치 이동: cd mini_project/project_file
+2. python manage.py makemigrations aiga
+3. python manage.py migrate
+4. python manage.py runserver
 ```
 
 ## 작업 기간
