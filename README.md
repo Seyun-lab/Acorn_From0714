@@ -15,6 +15,7 @@
 ## 시연 영상
 
 ## https://youtu.be/XSiDpRtzHwk?si=rTzKiUkNzh30UuRt
+<img width="80%" src="https://github.com/user-attachments/assets/9cb5266f-0863-404d-ab54-8b00c1ca81a8"/>
 
 ## <UI>
 
